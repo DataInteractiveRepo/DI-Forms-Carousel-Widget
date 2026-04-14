@@ -376,6 +376,11 @@
             font-weight: 500;
         }
 
+        /* Edit Mode - Hide upload area */
+        body.edit-mode .upload-area {
+            display: none;
+        }
+
         /* Responsive Design */
         @media (max-width: 480px) {
             .carousel-container {
@@ -438,9 +443,44 @@
         let currentSlide = 0;
         let isRequired = false;
         let lightboxCurrentIndex = 0;
+        let isEditMode = false;
 
         JFCustomWidget.subscribe("ready", function(msg) {
             isRequired = JFCustomWidget.getWidgetSetting('required') === 'Yes';
+            
+            // IMPROVEMENT: Check if this is edit mode
+            isEditMode = msg.isEditMode || (msg.value && msg.value.length > 0);
+            
+            // IMPROVEMENT: If in edit mode, add class to body and hide upload area
+            if (isEditMode) {
+                document.body.classList.add('edit-mode');
+                document.getElementById('drop-zone').style.display = 'none';
+            }
+            
+            // IMPROVEMENT: Restore images from existing data in edit mode
+            if (msg.value && msg.value.length > 0) {
+                try {
+                    // Parse the value if it's a string
+                    let parsedValue = typeof msg.value === 'string' ? JSON.parse(msg.value) : msg.value;
+                    
+                    // Handle both array and object formats
+                    if (Array.isArray(parsedValue)) {
+                        uploadedImages = parsedValue;
+                    } else if (parsedValue && typeof parsedValue === 'object') {
+                        uploadedImages = [parsedValue];
+                    }
+                    
+                    // Ensure all images have required properties
+                    uploadedImages = uploadedImages.filter(img => img && img.data);
+                    
+                    if (uploadedImages.length > 0) {
+                        updateCarousel();
+                    }
+                } catch (e) {
+                    console.error('Error parsing existing images:', e);
+                }
+            }
+            
             requestResize();
             
             JFCustomWidget.subscribe("submit", function() {
