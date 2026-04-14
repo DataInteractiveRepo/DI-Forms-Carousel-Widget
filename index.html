@@ -1,590 +1,676 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-  <script src="https://cdn.jotfor.ms/s/umd/latest/for-custom-widgets.js"></script>
-  <meta http-equiv="cache-control" content="no-cache" />
-  <meta http-equiv="expires" content="0" />
-  <meta http-equiv="pragma" content="no-cache" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>mycar Image Carousel - Design 1</title>
+    <script src="//js.jotform.com/JotFormCustomWidget.min.js"></script>
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 10px;
+            box-sizing: border-box;
+            background: transparent;
+        }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: transparent;
-      padding: 0;
-      color: #1a1a2e;
-    }
+        .widget-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
 
-    /* Upload Zone */
-    .upload-zone {
-      border: 2px dashed #cbd5e1;
-      border-radius: 12px;
-      padding: 32px 20px;
-      text-align: center;
-      background: #f8fafc;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-      position: relative;
-    }
-    .upload-zone:hover,
-    .upload-zone.dragover {
-      border-color: #6366f1;
-      background: #eef2ff;
-    }
-    .upload-zone__icon {
-      font-size: 36px;
-      margin-bottom: 10px;
-      display: block;
-    }
-    .upload-zone__title {
-      font-size: 15px;
-      font-weight: 600;
-      color: #374151;
-      margin-bottom: 4px;
-    }
-    .upload-zone__hint {
-      font-size: 12px;
-      color: #9ca3af;
-      margin-bottom: 14px;
-    }
-    .upload-zone__btn {
-      display: inline-block;
-      background: #6366f1;
-      color: #fff;
-      border: none;
-      padding: 8px 20px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .upload-zone__btn:hover { background: #4f46e5; }
-    #file-input { display: none; }
+        /* Design 1: Modern Blue with mycar Curves */
+        /* Upload Area Styles */
+        .upload-area {
+            border: 2px solid #00A6E9;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #CCEDFB 0%, #f9f9f9 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
 
-    /* Carousel */
-    .carousel {
-      display: none;
-      border-radius: 12px;
-      overflow: hidden;
-      background: #0f0f0f;
-      position: relative;
-    }
+        /* Curved design element background */
+        .upload-area::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 166, 233, 0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
 
-    .carousel__stage {
-      position: relative;
-      width: 100%;
-      height: 280px;
-      overflow: hidden;
-    }
+        .upload-area:hover, .upload-area.dragover {
+            border-color: #1D174F;
+            background: linear-gradient(135deg, #00A6E9 0%, #CCEDFB 100%);
+            box-shadow: 0 8px 24px rgba(0, 166, 233, 0.2);
+        }
 
-    .carousel__track {
-      display: flex;
-      height: 100%;
-      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+        .upload-area-content {
+            position: relative;
+            z-index: 1;
+        }
 
-    .carousel__slide {
-      min-width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
 
-    .carousel__slide img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-    }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
 
-    /* Nav buttons */
-    .carousel__nav {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(4px);
-      border: 1px solid rgba(255,255,255,0.2);
-      color: #fff;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      font-size: 16px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
-      transition: background 0.2s;
-    }
-    .carousel__nav:hover { background: rgba(255,255,255,0.3); }
-    .carousel__nav--prev { left: 10px; }
-    .carousel__nav--next { right: 10px; }
-    .carousel__nav.hidden { display: none; }
+        .upload-text {
+            color: #1D174F;
+            font-size: 18px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
 
-    /* Counter */
-    .carousel__counter {
-      position: absolute;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.55);
-      color: #fff;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 3px 10px;
-      border-radius: 20px;
-      letter-spacing: 0.05em;
-      pointer-events: none;
-    }
+        .upload-hint {
+            color: #004B88;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
 
-    /* Delete button */
-    .carousel__delete {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(220,38,38,0.8);
-      color: #fff;
-      border: none;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      font-size: 15px;
-      line-height: 1;
-      cursor: pointer;
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.2s;
-    }
-    .carousel__delete:hover { background: rgba(220,38,38,1); }
+        #file-input {
+            display: none;
+        }
 
-    /* Thumbnails */
-    .thumbnails {
-      display: flex;
-      gap: 6px;
-      padding: 10px;
-      background: #1a1a2e;
-      overflow-x: auto;
-      scrollbar-width: thin;
-      scrollbar-color: #4f46e5 transparent;
-    }
-    .thumbnails::-webkit-scrollbar { height: 3px; }
-    .thumbnails::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 2px; }
+        .btn-browse {
+            background: linear-gradient(135deg, #00A6E9 0%, #004B88 100%);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 166, 233, 0.3);
+        }
 
-    .thumbnail {
-      width: 52px;
-      height: 52px;
-      border-radius: 6px;
-      object-fit: cover;
-      cursor: pointer;
-      opacity: 0.5;
-      border: 2px solid transparent;
-      transition: opacity 0.2s, border-color 0.2s;
-      flex-shrink: 0;
-    }
-    .thumbnail.active {
-      opacity: 1;
-      border-color: #6366f1;
-    }
+        .btn-browse:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 166, 233, 0.4);
+        }
 
-    /* Add more button in thumbnail strip */
-    .thumbnail-add {
-      width: 52px;
-      height: 52px;
-      border-radius: 6px;
-      border: 2px dashed rgba(255,255,255,0.25);
-      background: transparent;
-      color: rgba(255,255,255,0.5);
-      font-size: 22px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .thumbnail-add:hover {
-      border-color: #6366f1;
-      color: #6366f1;
-    }
+        /* Carousel Styles */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #f9f9f9 0%, #CCEDFB 100%);
+            border-radius: 12px;
+            overflow: hidden;
+            display: none;
+            margin-bottom: 15px;
+            border: 2px solid #00A6E9;
+        }
 
-    /* Error */
-    .error-msg {
-      display: none;
-      color: #dc2626;
-      font-size: 12px;
-      margin-top: 6px;
-      text-align: center;
-    }
-    .error-msg.visible { display: block; }
+        .carousel-track {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.4s ease-in-out;
+        }
 
-    /* View-only mode — no delete, no add, no thumbnails strip actions */
-    body.view-only .carousel__delete { display: none; }
-    body.view-only .thumbnail-add { display: none; }
-    body.view-only .thumbnails { background: #111; }
+        .carousel-slide {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
 
-    /* Static/table mode — single image, compact */
-    body.static-mode .carousel__stage { height: 160px; }
-    body.static-mode .thumbnails { display: none; }
-    body.static-mode .carousel__delete { display: none; }
-    body.static-mode .thumbnail-add { display: none; }
-  </style>
+        .carousel-slide img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .carousel-slide img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Navigation Arrows */
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 166, 233, 0.8);
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background-color: #1D174F;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .nav-prev {
+            left: 15px;
+        }
+
+        .nav-next {
+            right: 15px;
+        }
+
+        /* Image Counter & Delete */
+        .slide-info {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(29, 23, 79, 0.8);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .btn-delete {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background-color: #F39524;
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(243, 149, 36, 0.3);
+        }
+
+        .btn-delete:hover {
+            background-color: #E67E0F;
+            transform: scale(1.15);
+        }
+
+        /* Thumbnail Strip */
+        .thumbnails {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .thumbnail {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            cursor: pointer;
+            opacity: 0.6;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .thumbnail:hover {
+            opacity: 0.8;
+            transform: scale(1.08);
+        }
+
+        .thumbnail.active {
+            opacity: 1;
+            border-color: #00A6E9;
+            box-shadow: 0 4px 12px rgba(0, 166, 233, 0.4);
+        }
+
+        /* Lightbox Styles */
+        .lightbox-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(29, 23, 79, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .lightbox-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .lightbox-container {
+            position: relative;
+            width: 90%;
+            max-width: 90vh;
+            height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .lightbox-overlay.active .lightbox-container {
+            transform: scale(1);
+        }
+
+        .lightbox-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            animation: zoomIn 0.4s ease;
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: #00A6E9;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            transition: all 0.2s ease;
+        }
+
+        .lightbox-close:hover {
+            background-color: #F39524;
+            transform: scale(1.1);
+        }
+
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background-color: #00A6E9;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            transition: all 0.2s ease;
+        }
+
+        .lightbox-nav:hover {
+            background-color: #F39524;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .lightbox-nav.prev {
+            left: 20px;
+        }
+
+        .lightbox-nav.next {
+            right: 20px;
+        }
+
+        .lightbox-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 166, 233, 0.9);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            z-index: 1001;
+            font-weight: 500;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .carousel-container {
+                height: 250px;
+            }
+
+            .nav-btn {
+                width: 38px;
+                height: 38px;
+                font-size: 18px;
+            }
+
+            .thumbnail {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="widget-container">
+        <!-- Upload Area -->
+        <div class="upload-area" id="drop-zone">
+            <div class="upload-area-content">
+                <div class="upload-icon">📸</div>
+                <div class="upload-text">Drag & drop images here</div>
+                <div class="upload-hint">PNG, JPG, GIF, WebP supported</div>
+                <button class="btn-browse" onclick="document.getElementById('file-input').click()">Browse Files</button>
+                <input type="file" id="file-input" multiple accept="image/*">
+            </div>
+        </div>
 
-  <!-- Upload zone -->
-  <div class="upload-zone" id="drop-zone">
-    <span class="upload-zone__icon">🖼️</span>
-    <div class="upload-zone__title">Drag & drop images here</div>
-    <div class="upload-zone__hint">PNG, JPG, GIF, WebP supported</div>
-    <button class="upload-zone__btn" type="button" id="browse-btn">Browse Files</button>
-    <input type="file" id="file-input" multiple accept="image/*">
-  </div>
+        <!-- Carousel Area -->
+        <div class="carousel-container" id="carousel">
+            <button class="nav-btn nav-prev" id="btn-prev" onclick="moveSlide(-1)">&#10094;</button>
+            <button class="nav-btn nav-next" id="btn-next" onclick="moveSlide(1)">&#10095;</button>
+            
+            <div class="carousel-track" id="track"></div>
+        </div>
 
-  <div class="error-msg" id="error-msg"></div>
-
-  <!-- Carousel -->
-  <div class="carousel" id="carousel">
-    <div class="carousel__stage">
-      <button class="carousel__nav carousel__nav--prev hidden" id="nav-prev">&#8249;</button>
-      <button class="carousel__nav carousel__nav--next hidden" id="nav-next">&#8250;</button>
-      <div class="carousel__track" id="track"></div>
-      <div class="carousel__counter" id="counter"></div>
+        <!-- Thumbnails -->
+        <div class="thumbnails" id="thumbnails"></div>
     </div>
-    <div class="thumbnails" id="thumbnails"></div>
-  </div>
 
-  <script>
-    (function () {
-      var images = []; // [{name, base64}]
-      var currentIndex = 0;
-      var isRequired = false;
-      var uploadServerURL = '';
-      var uploadFolder = '';
-      var uploadField = '';
+    <!-- Lightbox Overlay -->
+    <div class="lightbox-overlay" id="lightbox-overlay">
+        <div class="lightbox-container">
+            <img id="lightbox-image" class="lightbox-image" src="" alt="">
+            <button class="lightbox-close" onclick="closeLightbox()">×</button>
+            <button class="lightbox-nav prev" onclick="lightboxPrev()">&#10094;</button>
+            <button class="lightbox-nav next" onclick="lightboxNext()">&#10095;</button>
+            <div class="lightbox-counter">
+                <span id="lightbox-counter-text">1 / 1</span>
+            </div>
+        </div>
+    </div>
 
-      // Generate a folder ID matching Jotform's format: formID_hexTimestamp+seed
-      function generateFolder(formID) {
-        var seed = Math.floor(Math.random() * 0x75bcd15).toString(16);
-        var time = Math.floor(new Date().getTime() / 1000).toString(16);
-        return formID + '_' + time + seed;
-      }
+    <script>
+        let uploadedImages = [];
+        let currentSlide = 0;
+        let isRequired = false;
+        let lightboxCurrentIndex = 0;
 
-      // --- Helpers ---
-
-      function showError(msg) {
-        var el = document.getElementById('error-msg');
-        el.textContent = msg;
-        el.classList.add('visible');
-        setTimeout(function () { el.classList.remove('visible'); }, 4000);
-      }
-
-      function buildMetadataValue() {
-        if (images.length === 0) return '';
-        return JFCustomWidgetUtils.buildMetadata('imagelinks', images.map(function (img) {
-          var isDataUri = img.base64 && img.base64.indexOf('data:') === 0;
-          if (isDataUri) {
-            return { name: img.name, base64: img.base64 };
-          } else {
-            return { name: img.name, url: JFCustomWidgetUtils.getS3UriRelativePath(img.base64) };
-          }
-        }));
-      }
-
-      function sendCurrentValue() {
-        JFCustomWidget.sendData({ value: buildMetadataValue() });
-      }
-
-      function resize() {
-        setTimeout(function () {
-          JFCustomWidget.requestFrameResize({ height: document.body.scrollHeight + 20 });
-        }, 50);
-      }
-
-      // --- Carousel rendering ---
-
-      function renderCarousel() {
-        var carousel = document.getElementById('carousel');
-        var track = document.getElementById('track');
-        var thumbnails = document.getElementById('thumbnails');
-        var dropZone = document.getElementById('drop-zone');
-
-        if (images.length === 0) {
-          carousel.style.display = 'none';
-          dropZone.style.display = 'block';
-          resize();
-          return;
-        }
-
-        dropZone.style.display = 'none';
-        carousel.style.display = 'block';
-
-        if (currentIndex >= images.length) currentIndex = images.length - 1;
-
-        // Build slides
-        track.innerHTML = '';
-        images.forEach(function (img, i) {
-          var slide = document.createElement('div');
-          slide.className = 'carousel__slide';
-
-          var image = document.createElement('img');
-          image.src = img.base64;
-          image.alt = img.name;
-
-          var deleteBtn = document.createElement('button');
-          deleteBtn.className = 'carousel__delete';
-          deleteBtn.innerHTML = '&times;';
-          deleteBtn.title = 'Remove image';
-          deleteBtn.setAttribute('data-index', i);
-          deleteBtn.addEventListener('click', function () {
-            deleteImage(parseInt(this.getAttribute('data-index')));
-          });
-
-          slide.appendChild(image);
-          slide.appendChild(deleteBtn);
-          track.appendChild(slide);
+        JFCustomWidget.subscribe("ready", function(msg) {
+            isRequired = JFCustomWidget.getWidgetSetting('required') === 'Yes';
+            requestResize();
+            
+            JFCustomWidget.subscribe("submit", function() {
+                let isValid = true;
+                if (isRequired && uploadedImages.length === 0) {
+                    isValid = false;
+                }
+                
+                let resultData = {
+                    valid: isValid,
+                    value: uploadedImages.length > 0 ? JSON.stringify(uploadedImages.map(img => ({
+                        name: img.name,
+                        type: img.type,
+                        size: img.size,
+                        data: img.data
+                    }))) : ""
+                };
+                
+                JFCustomWidget.sendSubmit(resultData);
+            });
         });
 
-        // Build thumbnails
-        thumbnails.innerHTML = '';
-        images.forEach(function (img, i) {
-          var thumb = document.createElement('img');
-          thumb.src = img.base64;
-          thumb.alt = img.name;
-          thumb.className = 'thumbnail' + (i === currentIndex ? ' active' : '');
-          thumb.setAttribute('data-index', i);
-          thumb.addEventListener('click', function () {
-            goToSlide(parseInt(this.getAttribute('data-index')));
-          });
-          thumbnails.appendChild(thumb);
-        });
-
-        // Add more button in thumbnails
-        var addBtn = document.createElement('button');
-        addBtn.className = 'thumbnail-add';
-        addBtn.innerHTML = '+';
-        addBtn.title = 'Add more images';
-        addBtn.addEventListener('click', function () {
-          document.getElementById('file-input').click();
-        });
-        thumbnails.appendChild(addBtn);
-
-        // Nav visibility
-        var showNav = images.length > 1;
-        document.getElementById('nav-prev').classList.toggle('hidden', !showNav);
-        document.getElementById('nav-next').classList.toggle('hidden', !showNav);
-
-        goToSlide(currentIndex);
-        resize();
-      }
-
-      function goToSlide(index) {
-        currentIndex = index;
-        var track = document.getElementById('track');
-        track.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
-
-        // Update counter
-        document.getElementById('counter').textContent = (currentIndex + 1) + ' / ' + images.length;
-
-        // Update thumbnails
-        document.querySelectorAll('.thumbnail').forEach(function (t, i) {
-          t.classList.toggle('active', i === currentIndex);
-        });
-      }
-
-      function moveSlide(dir) {
-        var next = currentIndex + dir;
-        if (next < 0) next = images.length - 1;
-        if (next >= images.length) next = 0;
-        goToSlide(next);
-      }
-
-      function deleteImage(index) {
-        images.splice(index, 1);
-        if (currentIndex >= images.length) currentIndex = Math.max(0, images.length - 1);
-        renderCarousel();
-        sendCurrentValue();
-      }
-
-      // --- File handling ---
-
-      function readAsBase64(file, onDone) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-          onDone(e.target.result);
-        };
-        reader.readAsDataURL(file);
-      }
-
-      function processFiles(files) {
-        var imageFiles = Array.from(files).filter(function (f) {
-          return f.type.startsWith('image/');
-        });
-
-        if (imageFiles.length === 0) {
-          showError('Please select image files only.');
-          return;
-        }
-
-        var processed = 0;
-
-        function onImageReady() {
-          processed++;
-          if (processed === imageFiles.length) {
-            currentIndex = images.length - 1;
-            renderCarousel();
-            sendCurrentValue();
-          }
-        }
-
-        imageFiles.forEach(function (file) {
-          if (uploadServerURL && uploadFolder) {
-            uploadToJotform(file, function (url) {
-              if (url) {
-                images.push({ name: file.name, base64: url });
-                onImageReady();
-              } else {
-                readAsBase64(file, function (dataUri) {
-                  images.push({ name: file.name, base64: dataUri });
-                  onImageReady();
+        function requestResize() {
+            setTimeout(() => {
+                JFCustomWidget.requestFrameResize({
+                    height: document.body.scrollHeight + 20
                 });
-              }
+            }, 100);
+        }
+
+        const fileInput = document.getElementById('file-input');
+        const dropZone = document.getElementById('drop-zone');
+
+        fileInput.addEventListener('change', handleFiles);
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                handleFiles({ target: fileInput });
+            }
+        });
+
+        function handleFiles(e) {
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
+
+            let filesProcessed = 0;
+
+            files.forEach(file => {
+                if (!file.type.startsWith('image/')) return;
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    uploadedImages.push({
+                        id: Date.now() + Math.random().toString(36).substr(2, 9),
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                        data: event.target.result
+                    });
+
+                    filesProcessed++;
+                    if (filesProcessed === files.filter(f => f.type.startsWith('image/')).length) {
+                        updateCarousel();
+                        updateWidgetValue();
+                    }
+                };
+                reader.readAsDataURL(file);
             });
-          } else {
-            readAsBase64(file, function (dataUri) {
-              images.push({ name: file.name, base64: dataUri });
-              onImageReady();
+            
+            fileInput.value = '';
+        }
+
+        function updateCarousel() {
+            const carousel = document.getElementById('carousel');
+            const track = document.getElementById('track');
+            const thumbsContainer = document.getElementById('thumbnails');
+            
+            if (uploadedImages.length === 0) {
+                carousel.style.display = 'none';
+                thumbsContainer.innerHTML = '';
+                requestResize();
+                return;
+            }
+
+            carousel.style.display = 'block';
+            
+            if (currentSlide >= uploadedImages.length) {
+                currentSlide = Math.max(0, uploadedImages.length - 1);
+            }
+
+            track.innerHTML = '';
+            thumbsContainer.innerHTML = '';
+
+            uploadedImages.forEach((img, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'carousel-slide';
+                slide.innerHTML = `
+                    <img src="${img.data}" alt="${img.name}" onclick="openLightbox(${index})">
+                    <button class="btn-delete" onclick="deleteImage(${index})" title="Remove image">&times;</button>
+                    <div class="slide-info">${index + 1} / ${uploadedImages.length}</div>
+                `;
+                track.appendChild(slide);
+
+                const thumb = document.createElement('img');
+                thumb.src = img.data;
+                thumb.className = `thumbnail ${index === currentSlide ? 'active' : ''}`;
+                thumb.onclick = () => goToSlide(index);
+                thumbsContainer.appendChild(thumb);
             });
-          }
+
+            document.getElementById('btn-prev').style.display = uploadedImages.length > 1 ? 'flex' : 'none';
+            document.getElementById('btn-next').style.display = uploadedImages.length > 1 ? 'flex' : 'none';
+
+            goToSlide(currentSlide);
+            requestResize();
+        }
+
+        function moveSlide(direction) {
+            let newSlide = currentSlide + direction;
+            if (newSlide < 0) newSlide = uploadedImages.length - 1;
+            if (newSlide >= uploadedImages.length) newSlide = 0;
+            goToSlide(newSlide);
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            const track = document.getElementById('track');
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+            const thumbs = document.querySelectorAll('.thumbnail');
+            thumbs.forEach((thumb, i) => {
+                if (i === currentSlide) {
+                    thumb.classList.add('active');
+                } else {
+                    thumb.classList.remove('active');
+                }
+            });
+        }
+
+        function deleteImage(index) {
+            uploadedImages.splice(index, 1);
+            updateCarousel();
+            updateWidgetValue();
+        }
+
+        function updateWidgetValue() {
+            const value = uploadedImages.length > 0 ? JSON.stringify(uploadedImages.map(img => ({
+                name: img.name,
+                type: img.type,
+                size: img.size,
+                data: img.data
+            }))) : "";
+            
+            JFCustomWidget.sendData({ value: value });
+        }
+
+        function openLightbox(index) {
+            lightboxCurrentIndex = index;
+            const overlay = document.getElementById('lightbox-overlay');
+            const image = document.getElementById('lightbox-image');
+            
+            image.src = uploadedImages[index].data;
+            updateLightboxCounter();
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            document.addEventListener('keydown', handleLightboxKeyboard);
+        }
+
+        function closeLightbox() {
+            const overlay = document.getElementById('lightbox-overlay');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+            document.removeEventListener('keydown', handleLightboxKeyboard);
+        }
+
+        function lightboxPrev() {
+            lightboxCurrentIndex--;
+            if (lightboxCurrentIndex < 0) {
+                lightboxCurrentIndex = uploadedImages.length - 1;
+            }
+            updateLightboxImage();
+        }
+
+        function lightboxNext() {
+            lightboxCurrentIndex++;
+            if (lightboxCurrentIndex >= uploadedImages.length) {
+                lightboxCurrentIndex = 0;
+            }
+            updateLightboxImage();
+        }
+
+        function updateLightboxImage() {
+            const image = document.getElementById('lightbox-image');
+            image.src = uploadedImages[lightboxCurrentIndex].data;
+            updateLightboxCounter();
+        }
+
+        function updateLightboxCounter() {
+            const counter = document.getElementById('lightbox-counter-text');
+            counter.textContent = `${lightboxCurrentIndex + 1} / ${uploadedImages.length}`;
+        }
+
+        function handleLightboxKeyboard(e) {
+            if (e.key === 'ArrowLeft') {
+                lightboxPrev();
+            } else if (e.key === 'ArrowRight') {
+                lightboxNext();
+            } else if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        }
+
+        document.getElementById('lightbox-overlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLightbox();
+            }
         });
-      }
-
-      function uploadToJotform(file, callback) {
-        var origin = uploadServerURL.replace('/upload', '');
-        var url = origin + '/server.php?action=handleWidgetFiles&type=save';
-
-        var formData = new FormData();
-        formData.append('file', file, file.name);
-
-        fetch(url, {
-          method: 'POST',
-          body: formData
-        })
-        .then(function (res) { return res.json(); })
-        .then(function (response) {
-          console.log('[uploadToJotform] response:', JSON.stringify(response));
-          if (response && response.success && response.message) {
-            callback(response.message);
-          } else {
-            callback(null);
-          }
-        })
-        .catch(function () { callback(null); });
-      }
-
-      // --- Event wiring ---
-
-      document.getElementById('browse-btn').addEventListener('click', function () {
-        document.getElementById('file-input').click();
-      });
-
-      document.getElementById('file-input').addEventListener('change', function (e) {
-        if (e.target.files.length) processFiles(e.target.files);
-        e.target.value = '';
-      });
-
-      var dropZone = document.getElementById('drop-zone');
-      dropZone.addEventListener('dragover', function (e) {
-        e.preventDefault();
-        dropZone.classList.add('dragover');
-      });
-      dropZone.addEventListener('dragleave', function () {
-        dropZone.classList.remove('dragover');
-      });
-      dropZone.addEventListener('drop', function (e) {
-        e.preventDefault();
-        dropZone.classList.remove('dragover');
-        if (e.dataTransfer.files.length) processFiles(e.dataTransfer.files);
-      });
-
-      document.getElementById('nav-prev').addEventListener('click', function () { moveSlide(-1); });
-      document.getElementById('nav-next').addEventListener('click', function () { moveSlide(1); });
-
-      // --- Widget lifecycle ---
-
-      JFCustomWidget.subscribe('ready', function (data) {
-        isRequired = JFCustomWidget.isWidgetRequired();
-        uploadServerURL = data.uploadServerURL || '';
-        uploadField = 'q' + data.qid + '_typeA';
-        if (uploadServerURL) {
-          uploadFolder = generateFolder(data.formID);
-        }
-
-        // Static mode — widget is being viewed in tables/submission view
-        // isWidgetStatic() is true when rendered in the submissions table
-        var isStatic = JFCustomWidget.isWidgetStatic();
-
-        // Edit mode — form loaded with an existing submission value
-        var isEditMode = data.isEditMode || (data.value && data.value.length > 0);
-
-        if (isStatic) {
-          document.body.classList.add('static-mode', 'view-only');
-        } else if (isEditMode) {
-          document.body.classList.add('view-only');
-        }
-
-        // Restore saved value (edit mode or static)
-        if (data.value && JFCustomWidgetUtils.hasMetadata(data.value)) {
-          var extracted = JFCustomWidgetUtils.extractMetadata(data.value);
-          if (extracted && extracted.length > 0) {
-            images = extracted.map(function (item) {
-              var src = item.base64 || '';
-              if (!src && item.url) {
-                src = JFCustomWidgetUtils.fixS3UriOrigin(item.url);
-              }
-              return { name: item.name, base64: src };
-            }).filter(function (img) { return !!img.base64; });
-            currentIndex = 0;
-            if (images.length > 0) renderCarousel();
-          }
-        }
-
-        // In static mode with no value — show nothing
-        if (isStatic && images.length === 0) {
-          document.getElementById('drop-zone').style.display = 'none';
-          resize();
-          return;
-        }
-
-        JFCustomWidget.subscribe('submit', function () {
-          var value = buildMetadataValue();
-          var valid = !isRequired || images.length > 0;
-
-          if (!valid) {
-            JFCustomWidget.showWidgetError(JFCustomWidget.texts.required || 'This field is required.');
-          } else {
-            JFCustomWidget.hideWidgetError();
-          }
-
-          JFCustomWidget.sendSubmit({ valid: valid, value: value });
-        });
-
-        JFCustomWidget.subscribe('clear', function () {
-          images = [];
-          currentIndex = 0;
-          document.body.classList.remove('view-only');
-          renderCarousel();
-          sendCurrentValue();
-        });
-
-        resize();
-      });
-
-    })();
-  </script>
+    </script>
 </body>
 </html>
