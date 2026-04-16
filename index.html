@@ -7,17 +7,19 @@
     <script src="https://cdn.jotfor.ms/s/umd/latest/for-custom-widgets.js"></script>
     
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 10px;
-            box-sizing: border-box;
             background: transparent;
         }
 
         .widget-container {
             width: 100%;
-            max-width: 600px;
             margin: 0 auto;
         }
 
@@ -106,7 +108,6 @@
         .carousel-container {
             position: relative;
             width: 100%;
-            height: 300px;
             background: linear-gradient(135deg, #f9f9f9 0%, #CCEDFB 100%);
             border-radius: 12px;
             overflow: hidden;
@@ -456,6 +457,16 @@
         let uploadServerURL = '';
         let uploadFolder = '';
 
+        // Widget Settings Configuration
+        let widgetSettings = {
+            carouselHeight: 300,
+            carouselWidth: '100%',
+            containerPadding: 10,
+            containerOverflow: 'visible',
+            thumbnailSize: 60,
+            thumbnailGap: 10
+        };
+
         // Generate a folder ID matching Jotform's format: formID_hexTimestamp+seed
         function generateFolder(formID) {
             var seed = Math.floor(Math.random() * 0x75bcd15).toString(16);
@@ -529,6 +540,30 @@
                     height: document.body.scrollHeight + 20
                 });
             }, 50);
+        }
+
+        // Apply widget settings to DOM
+        function applyWidgetSettings() {
+            const container = document.querySelector('.widget-container');
+            const carousel = document.getElementById('carousel');
+            const thumbnails = document.getElementById('thumbnails');
+
+            // Apply container settings
+            container.style.padding = widgetSettings.containerPadding + 'px';
+            container.style.overflow = widgetSettings.containerOverflow;
+
+            // Apply carousel settings
+            carousel.style.height = widgetSettings.carouselHeight + 'px';
+            carousel.style.width = widgetSettings.carouselWidth;
+
+            // Apply thumbnail settings
+            const thumbs = document.querySelectorAll('.thumbnail');
+            thumbs.forEach(function(thumb) {
+                thumb.style.width = widgetSettings.thumbnailSize + 'px';
+                thumb.style.height = widgetSettings.thumbnailSize + 'px';
+            });
+
+            thumbnails.style.gap = widgetSettings.thumbnailGap + 'px';
         }
 
         // Process uploaded files
@@ -614,6 +649,8 @@
                 thumb.src = img.base64;
                 thumb.className = `thumbnail ${index === currentSlide ? 'active' : ''}`;
                 thumb.onclick = () => goToSlide(index);
+                thumb.style.width = widgetSettings.thumbnailSize + 'px';
+                thumb.style.height = widgetSettings.thumbnailSize + 'px';
                 thumbsContainer.appendChild(thumb);
             });
 
@@ -752,10 +789,30 @@
             // Edit mode — form loaded with an existing submission value
             var isEditMode = data.isEditMode || (data.value && data.value.length > 0);
 
+            // Get widget settings from Jotform
+            var settings = JFCustomWidget.getWidgetSettings();
+            if (settings) {
+                if (settings.carouselHeight) widgetSettings.carouselHeight = parseInt(settings.carouselHeight);
+                if (settings.carouselWidth) widgetSettings.carouselWidth = settings.carouselWidth;
+                if (settings.containerPadding) widgetSettings.containerPadding = parseInt(settings.containerPadding);
+                if (settings.containerOverflow) widgetSettings.containerOverflow = settings.containerOverflow;
+                if (settings.thumbnailSize) widgetSettings.thumbnailSize = parseInt(settings.thumbnailSize);
+                if (settings.thumbnailGap) widgetSettings.thumbnailGap = parseInt(settings.thumbnailGap);
+            }
+
+            // Apply widget settings
+            applyWidgetSettings();
+
             if (isStatic) {
                 document.body.classList.add('static-mode', 'view-only');
             } else if (isEditMode) {
                 document.body.classList.add('view-only');
+            }
+
+            // Hide upload element when editLink is present
+            var editLink = data.editLink || false;
+            if (editLink) {
+                document.getElementById('drop-zone').style.display = 'none';
             }
 
             // Restore saved value (edit mode or static)
@@ -772,12 +829,6 @@
                     currentSlide = 0;
                     if (uploadedImages.length > 0) updateCarousel();
                 }
-            }
-
-            // Hide upload element when editLink is present
-            var editLink = data.editLink || false;
-            if (editLink) {
-                document.getElementById('drop-zone').style.display = 'none';
             }
 
             // In static mode with no value — show nothing
@@ -810,6 +861,22 @@
 
             requestResize();
         });
+
+        // Listen for widget settings changes
+        JFCustomWidget.subscribe('settingsUpdated', function (settings) {
+            if (settings.carouselHeight) widgetSettings.carouselHeight = parseInt(settings.carouselHeight);
+            if (settings.carouselWidth) widgetSettings.carouselWidth = settings.carouselWidth;
+            if (settings.containerPadding) widgetSettings.containerPadding = parseInt(settings.containerPadding);
+            if (settings.containerOverflow) widgetSettings.containerOverflow = settings.containerOverflow;
+            if (settings.thumbnailSize) widgetSettings.thumbnailSize = parseInt(settings.thumbnailSize);
+            if (settings.thumbnailGap) widgetSettings.thumbnailGap = parseInt(settings.thumbnailGap);
+
+            applyWidgetSettings();
+            updateCarousel();
+            requestResize();
+        });
     </script>
+</head>
+<body>
 </body>
 </html>
