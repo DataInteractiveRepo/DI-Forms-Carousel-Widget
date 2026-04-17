@@ -4,23 +4,23 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>mycar Image Carousel - Design 1</title>
-    <script src="//js.jotform.com/JotFormCustomWidget.min.js"></script>
+    <script src="https://cdn.jotfor.ms/s/umd/latest/for-custom-widgets.js"></script>
     
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            padding: 10px;
             background: transparent;
         }
 
         .widget-container {
             width: 100%;
-            max-width: 100%;
             margin: 0 auto;
-            padding: 10px;
-            box-sizing: border-box;
         }
 
         /* Design 1: Modern Blue with mycar Curves */
@@ -36,7 +36,6 @@
             margin-bottom: 20px;
             position: relative;
             overflow: hidden;
-            box-sizing: border-box;
         }
 
         /* Curved design element background */
@@ -67,12 +66,6 @@
             font-size: 48px;
             margin-bottom: 15px;
             display: inline-block;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
         }
 
         .upload-text {
@@ -111,20 +104,16 @@
             box-shadow: 0 6px 16px rgba(0, 166, 233, 0.4);
         }
 
-        /* Carousel Styles - RESPONSIVE FIX */
+        /* Carousel Styles */
         .carousel-container {
             position: relative;
             width: 100%;
-            aspect-ratio: 2 / 1;
-            min-height: 200px;
-            max-height: 500px;
             background: linear-gradient(135deg, #f9f9f9 0%, #CCEDFB 100%);
             border-radius: 12px;
             overflow: hidden;
             display: none;
             margin-bottom: 15px;
             border: 2px solid #00A6E9;
-            box-sizing: border-box;
         }
 
         .carousel-track {
@@ -149,8 +138,6 @@
             object-fit: contain;
             cursor: pointer;
             transition: transform 0.2s ease;
-            width: auto;
-            height: auto;
         }
 
         .carousel-slide img:hover {
@@ -175,7 +162,6 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
-            flex-shrink: 0;
         }
 
         .nav-btn:hover {
@@ -220,7 +206,6 @@
             z-index: 10;
             transition: all 0.2s ease;
             box-shadow: 0 2px 8px rgba(243, 149, 36, 0.3);
-            flex-shrink: 0;
         }
 
         .btn-delete:hover {
@@ -235,7 +220,6 @@
             margin-top: 15px;
             overflow-x: auto;
             padding-bottom: 8px;
-            box-sizing: border-box;
         }
 
         .thumbnail {
@@ -262,54 +246,130 @@
             box-shadow: 0 4px 12px rgba(0, 166, 233, 0.4);
         }
 
-        /* Lightbox Styles */
-        .lightbox-overlay {
+        /* Popup Modal Styles */
+        .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(29, 23, 79, 0.95);
+            background-color: rgba(29, 23, 79, 0.7);
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 1000;
             opacity: 0;
             transition: opacity 0.3s ease;
+            padding: 20px;
         }
 
-        .lightbox-overlay.active {
+        .modal-overlay.active {
             display: flex;
             opacity: 1;
         }
 
-        .lightbox-container {
+        .modal-container {
             position: relative;
-            width: 90%;
-            max-width: 90vh;
-            height: 90vh;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 90vw;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.3s ease;
+            overflow: hidden;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            background: linear-gradient(135deg, #f9f9f9 0%, #CCEDFB 100%);
+        }
+
+        .modal-counter {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1D174F;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #1D174F;
+            cursor: pointer;
+            padding: 0;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
+            border-radius: 50%;
+            transition: all 0.2s ease;
         }
 
-        .lightbox-overlay.active .lightbox-container {
-            transform: scale(1);
+        .modal-close-btn:hover {
+            background-color: #F39524;
+            color: white;
+            transform: scale(1.1);
         }
 
-        .lightbox-image {
+        .modal-body {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background: #f5f5f5;
+        }
+
+        .modal-image-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+        }
+
+        .modal-image-wrapper.dragging {
+            cursor: grabbing;
+        }
+
+        .modal-image {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
-            animation: zoomIn 0.4s ease;
+            animation: zoomIn 0.3s ease;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            transform-origin: center;
+            transition: transform 0.1s ease-out;
         }
 
         @keyframes zoomIn {
             from {
                 opacity: 0;
-                transform: scale(0.8);
+                transform: scale(0.9);
             }
             to {
                 opacity: 1;
@@ -317,223 +377,198 @@
             }
         }
 
-        .lightbox-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background-color: #00A6E9;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 30px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1001;
-            transition: all 0.2s ease;
-            flex-shrink: 0;
-        }
-
-        .lightbox-close:hover {
-            background-color: #F39524;
-            transform: scale(1.1);
-        }
-
-        .lightbox-nav {
+        /* Modal Navigation */
+        .modal-nav-btn {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            width: 50px;
-            height: 50px;
-            background-color: #00A6E9;
+            background-color: rgba(0, 166, 233, 0.85);
             color: white;
             border: none;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            font-size: 24px;
+            font-size: 18px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1001;
             transition: all 0.2s ease;
-            flex-shrink: 0;
+            z-index: 10;
         }
 
-        .lightbox-nav:hover {
+        .modal-nav-btn:hover {
             background-color: #F39524;
             transform: translateY(-50%) scale(1.1);
         }
 
-        .lightbox-nav.prev {
-            left: 20px;
+        .modal-nav-prev {
+            left: 12px;
         }
 
-        .lightbox-nav.next {
-            right: 20px;
+        .modal-nav-next {
+            right: 12px;
         }
 
-        .lightbox-counter {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 166, 233, 0.9);
+        /* Modal Zoom Controls */
+        .modal-controls {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            padding: 12px 20px;
+            border-top: 1px solid #e5e7eb;
+            background: linear-gradient(135deg, #f9f9f9 0%, #CCEDFB 100%);
+            flex-wrap: wrap;
+        }
+
+        .zoom-btn {
+            width: 32px;
+            height: 32px;
+            background-color: #00A6E9;
             color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            z-index: 1001;
-            font-weight: 500;
+            border: none;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
         }
 
-        /* ===== ENHANCED RESPONSIVE DESIGN ===== */
-        /* Extra Small Devices (320px - 480px) */
-        @media (max-width: 480px) {
-            .widget-container {
-                padding: 0;
+        .zoom-btn:hover {
+            background-color: #F39524;
+            transform: scale(1.1);
+        }
+
+        .zoom-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .zoom-level {
+            color: #1D174F;
+            font-size: 13px;
+            font-weight: 600;
+            min-width: 45px;
+            text-align: center;
+            margin: 0 4px;
+        }
+
+        .zoom-reset-btn {
+            width: 32px;
+            height: 32px;
+            background-color: #004B88;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .zoom-reset-btn:hover {
+            background-color: #F39524;
+            transform: scale(1.1);
+        }
+
+        /* Error message */
+        .error-msg {
+            display: none;
+            color: #dc2626;
+            font-size: 12px;
+            margin-top: 6px;
+            text-align: center;
+        }
+        .error-msg.visible { display: block; }
+
+        /* View-only mode — no delete, no add, no thumbnails strip actions */
+        body.view-only .btn-delete { display: none; }
+        body.view-only .thumbnails { background: transparent; }
+
+        /* Static/table mode — single image, compact */
+        body.static-mode .carousel-container { height: 160px; }
+        body.static-mode .thumbnails { display: none; }
+        body.static-mode .btn-delete { display: none; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .modal-container {
+                max-width: 95vw;
+                max-height: 80vh;
             }
 
-            .upload-area {
-                padding: 30px 15px;
-                margin-bottom: 15px;
+            .modal-header {
+                padding: 12px 16px;
             }
 
-            .upload-icon {
-                font-size: 40px;
-                margin-bottom: 10px;
+            .modal-controls {
+                padding: 10px 16px;
+                gap: 6px;
             }
 
-            .upload-text {
-                font-size: 16px;
+            .zoom-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
             }
 
-            .upload-hint {
+            .zoom-level {
                 font-size: 12px;
+                min-width: 40px;
             }
 
-            .btn-browse {
-                padding: 10px 20px;
-                font-size: 13px;
-            }
-
-            /* Carousel responsive on mobile */
-            .carousel-container {
-                aspect-ratio: 16 / 12;
-                min-height: 180px;
-                margin-bottom: 12px;
-                border-radius: 8px;
-            }
-
-            .nav-btn {
+            .modal-nav-btn {
                 width: 36px;
                 height: 36px;
                 font-size: 16px;
-                left: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-overlay {
+                padding: 10px;
             }
 
-            .nav-next {
-                right: 8px;
+            .modal-container {
+                max-width: 100vw;
+                max-height: 90vh;
+                border-radius: 12px;
             }
 
-            .slide-info {
-                font-size: 11px;
-                padding: 4px 10px;
-                bottom: 10px;
+            .modal-header {
+                padding: 10px 12px;
             }
 
-            .btn-delete {
-                width: 28px;
-                height: 28px;
-                font-size: 16px;
-                top: 8px;
-                right: 8px;
+            .modal-controls {
+                padding: 8px 12px;
+                gap: 4px;
             }
 
-            .thumbnail {
-                width: 50px;
-                height: 50px;
-                gap: 8px;
-            }
-
-            .thumbnails {
-                gap: 8px;
-                margin-top: 12px;
-            }
-
-            .lightbox-close {
-                width: 40px;
-                height: 40px;
-                font-size: 24px;
-                top: 10px;
-                right: 10px;
-            }
-
-            .lightbox-nav {
-                width: 40px;
-                height: 40px;
-                font-size: 20px;
-            }
-
-            .lightbox-nav.prev {
-                left: 10px;
-            }
-
-            .lightbox-nav.next {
-                right: 10px;
-            }
-
-            .lightbox-counter {
+            .zoom-btn {
+                width: 26px;
+                height: 26px;
                 font-size: 12px;
-                padding: 6px 12px;
-                bottom: 10px;
-            }
-        }
-
-        /* Small Devices (481px - 768px) */
-        @media (min-width: 481px) and (max-width: 768px) {
-            .carousel-container {
-                aspect-ratio: 16 / 10;
-                min-height: 220px;
             }
 
-            .nav-btn {
-                width: 40px;
-                height: 40px;
-                font-size: 18px;
+            .zoom-level {
+                font-size: 11px;
+                min-width: 35px;
             }
 
-            .thumbnail {
-                width: 55px;
-                height: 55px;
-            }
-        }
-
-        /* Medium Devices and Up (769px+) */
-        @media (min-width: 769px) {
-            .widget-container {
-                max-width: 600px;
-            }
-
-            .carousel-container {
-                aspect-ratio: 2 / 1;
-                min-height: 250px;
-            }
-        }
-
-        /* Landscape orientation adjustments */
-        @media (orientation: landscape) and (max-height: 500px) {
-            .carousel-container {
-                aspect-ratio: 16 / 8;
-                min-height: 150px;
-            }
-
-            .nav-btn {
+            .modal-nav-btn {
                 width: 32px;
                 height: 32px;
                 font-size: 14px;
+            }
+
+            .carousel-container {
+                height: 200px;
             }
 
             .thumbnail {
@@ -556,6 +591,8 @@
             </div>
         </div>
 
+        <div class="error-msg" id="error-msg"></div>
+
         <!-- Carousel Area -->
         <div class="carousel-container" id="carousel">
             <button class="nav-btn nav-prev" id="btn-prev" onclick="moveSlide(-1)">&#10094;</button>
@@ -568,15 +605,30 @@
         <div class="thumbnails" id="thumbnails"></div>
     </div>
 
-    <!-- Lightbox Overlay -->
-    <div class="lightbox-overlay" id="lightbox-overlay">
-        <div class="lightbox-container">
-            <img id="lightbox-image" class="lightbox-image" src="" alt="">
-            <button class="lightbox-close" onclick="closeLightbox()">×</button>
-            <button class="lightbox-nav prev" onclick="lightboxPrev()">&#10094;</button>
-            <button class="lightbox-nav next" onclick="lightboxNext()">&#10095;</button>
-            <div class="lightbox-counter">
-                <span id="lightbox-counter-text">1 / 1</span>
+    <!-- Popup Modal -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal-container" id="modal-container">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <div class="modal-counter" id="modal-counter">1 / 1</div>
+                <button class="modal-close-btn" onclick="closeModal()" title="Close">×</button>
+            </div>
+
+            <!-- Modal Body (Image Display) -->
+            <div class="modal-body">
+                <div class="modal-image-wrapper" id="modal-image-wrapper">
+                    <img id="modal-image" class="modal-image" src="" alt="">
+                </div>
+                <button class="modal-nav-btn modal-nav-prev" onclick="modalPrev()" title="Previous">&#10094;</button>
+                <button class="modal-nav-btn modal-nav-next" onclick="modalNext()" title="Next">&#10095;</button>
+            </div>
+
+            <!-- Modal Footer (Controls) -->
+            <div class="modal-controls">
+                <button class="zoom-btn" id="zoom-out-btn" onclick="zoomOut()" title="Zoom Out">−</button>
+                <span class="zoom-level" id="zoom-level">100%</span>
+                <button class="zoom-btn" id="zoom-in-btn" onclick="zoomIn()" title="Zoom In">+</button>
+                <button class="zoom-reset-btn" id="zoom-reset-btn" onclick="resetZoom()" title="Reset">Reset</button>
             </div>
         </div>
     </div>
@@ -585,114 +637,296 @@
         let uploadedImages = [];
         let currentSlide = 0;
         let isRequired = false;
-        let lightboxCurrentIndex = 0;
+        let modalCurrentIndex = 0;
+        let uploadServerURL = '';
+        let uploadFolder = '';
 
-        JFCustomWidget.subscribe("ready", function(msg) {
-            isRequired = JFCustomWidget.getWidgetSetting('required') === 'Yes';
-            requestResize();
-            
-            JFCustomWidget.subscribe("submit", function() {
-                let isValid = true;
-                if (isRequired && uploadedImages.length === 0) {
-                    isValid = false;
+        // Zoom state
+        let zoomLevel = 100;
+        const MIN_ZOOM = 50;
+        const MAX_ZOOM = 300;
+        const ZOOM_STEP = 10;
+        let isDragging = false;
+        let dragStartX = 0;
+        let dragStartY = 0;
+        let dragOffsetX = 0;
+        let dragOffsetY = 0;
+
+        // Widget Settings Configuration
+        let widgetSettings = {
+            carouselHeight: 300,
+            carouselWidth: '100%',
+            containerPadding: 10,
+            containerOverflow: 'visible',
+            thumbnailSize: 60,
+            thumbnailGap: 10
+        };
+
+        // Generate a folder ID matching Jotform's format: formID_hexTimestamp+seed
+        function generateFolder(formID) {
+            var seed = Math.floor(Math.random() * 0x75bcd15).toString(16);
+            var time = Math.floor(new Date().getTime() / 1000).toString(16);
+            return formID + '_' + time + seed;
+        }
+
+        // Build Jotform metadata structure
+        function buildMetadataValue() {
+            if (uploadedImages.length === 0) return '';
+            return JFCustomWidgetUtils.buildMetadata('imagelinks', uploadedImages.map(function (img) {
+                var isDataUri = img.base64 && img.base64.indexOf('data:') === 0;
+                if (isDataUri) {
+                    return { name: img.name, base64: img.base64 };
+                } else {
+                    return { name: img.name, url: JFCustomWidgetUtils.getS3UriRelativePath(img.base64) };
                 }
-                
-                let resultData = {
-                    valid: isValid,
-                    value: uploadedImages.length > 0 ? JSON.stringify(uploadedImages.map(img => ({
-                        name: img.name,
-                        type: img.type,
-                        size: img.size,
-                        data: img.data
-                    }))) : ""
-                };
-                
-                JFCustomWidget.sendSubmit(resultData);
-            });
-        });
+            }));
+        }
 
+        // Upload file to Jotform server
+        function uploadToJotform(file, callback) {
+            var origin = uploadServerURL.replace('/upload', '');
+            var url = origin + '/server.php?action=handleWidgetFiles&type=save';
+
+            var formData = new FormData();
+            formData.append('file', file, file.name);
+
+            fetch(url, {
+                method: 'POST',
+                body: formData
+            })
+            .then(function (res) { return res.json(); })
+            .then(function (response) {
+                console.log('[uploadToJotform] response:', JSON.stringify(response));
+                if (response && response.success && response.message) {
+                    callback(response.message);
+                } else {
+                    callback(null);
+                }
+            })
+            .catch(function () { callback(null); });
+        }
+
+        // Read file as base64
+        function readAsBase64(file, onDone) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                onDone(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Show error message
+        function showError(msg) {
+            var el = document.getElementById('error-msg');
+            el.textContent = msg;
+            el.classList.add('visible');
+            setTimeout(function () { el.classList.remove('visible'); }, 4000);
+        }
+
+        // Send current value to Jotform
+        function sendCurrentValue() {
+            JFCustomWidget.sendData({ value: buildMetadataValue() });
+        }
+
+        // Request frame resize
         function requestResize() {
-            setTimeout(() => {
-                // Calculate actual content height without extra padding
-                const container = document.querySelector('.widget-container');
-                const contentHeight = container ? container.offsetHeight : document.body.scrollHeight;
-                
-                // Add minimal padding (10px top + 10px bottom)
-                const totalHeight = contentHeight + 20;
-                
+            setTimeout(function () {
                 JFCustomWidget.requestFrameResize({
-                    height: totalHeight
+                    height: document.body.scrollHeight + 20
                 });
-            }, 100);
+            }, 50);
         }
 
-        const fileInput = document.getElementById('file-input');
-        const dropZone = document.getElementById('drop-zone');
+        // Apply widget settings to DOM
+        function applyWidgetSettings() {
+            const container = document.querySelector('.widget-container');
+            const carousel = document.getElementById('carousel');
+            const thumbnails = document.getElementById('thumbnails');
 
-        fileInput.addEventListener('change', handleFiles);
+            // Apply container settings
+            container.style.padding = widgetSettings.containerPadding + 'px';
+            container.style.overflow = widgetSettings.containerOverflow;
 
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('dragover');
-        });
+            // Apply carousel settings
+            carousel.style.height = widgetSettings.carouselHeight + 'px';
+            carousel.style.width = widgetSettings.carouselWidth;
 
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('dragover');
-        });
-
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('dragover');
-            
-            if (e.dataTransfer.files.length > 0) {
-                fileInput.files = e.dataTransfer.files;
-                handleFiles({ target: fileInput });
-            }
-        });
-
-        function handleFiles(e) {
-            const files = Array.from(e.target.files);
-            if (files.length === 0) return;
-
-            let filesProcessed = 0;
-
-            files.forEach(file => {
-                if (!file.type.startsWith('image/')) return;
-
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    uploadedImages.push({
-                        id: Date.now() + Math.random().toString(36).substr(2, 9),
-                        name: file.name,
-                        type: file.type,
-                        size: file.size,
-                        data: event.target.result
-                    });
-
-                    filesProcessed++;
-                    if (filesProcessed === files.filter(f => f.type.startsWith('image/')).length) {
-                        updateCarousel();
-                        updateWidgetValue();
-                    }
-                };
-                reader.readAsDataURL(file);
+            // Apply thumbnail settings
+            const thumbs = document.querySelectorAll('.thumbnail');
+            thumbs.forEach(function(thumb) {
+                thumb.style.width = widgetSettings.thumbnailSize + 'px';
+                thumb.style.height = widgetSettings.thumbnailSize + 'px';
             });
-            
-            fileInput.value = '';
+
+            thumbnails.style.gap = widgetSettings.thumbnailGap + 'px';
         }
 
+        // Zoom Functions
+        function zoomIn() {
+            if (zoomLevel < MAX_ZOOM) {
+                zoomLevel = Math.min(zoomLevel + ZOOM_STEP, MAX_ZOOM);
+                updateZoom();
+            }
+        }
+
+        function zoomOut() {
+            if (zoomLevel > MIN_ZOOM) {
+                zoomLevel = Math.max(zoomLevel - ZOOM_STEP, MIN_ZOOM);
+                updateZoom();
+            }
+        }
+
+        function resetZoom() {
+            zoomLevel = 100;
+            dragOffsetX = 0;
+            dragOffsetY = 0;
+            updateZoom();
+        }
+
+        function updateZoom() {
+            const image = document.getElementById('modal-image');
+            const zoomLevelDisplay = document.getElementById('zoom-level');
+            const zoomOutBtn = document.getElementById('zoom-out-btn');
+            const zoomInBtn = document.getElementById('zoom-in-btn');
+
+            // Update image transform
+            image.style.transform = `scale(${zoomLevel / 100}) translate(${dragOffsetX}px, ${dragOffsetY}px)`;
+
+            // Update zoom level display
+            zoomLevelDisplay.textContent = zoomLevel + '%';
+
+            // Update button states
+            zoomOutBtn.disabled = zoomLevel <= MIN_ZOOM;
+            zoomInBtn.disabled = zoomLevel >= MAX_ZOOM;
+        }
+
+        // Scroll-to-zoom for desktop
+        function handleMouseWheel(e) {
+            if (!document.getElementById('modal-overlay').classList.contains('active')) return;
+            
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? -1 : 1;
+            
+            if (delta > 0) {
+                zoomIn();
+            } else {
+                zoomOut();
+            }
+        }
+
+        // Touch events for mobile pinch-to-zoom
+        let lastDistance = 0;
+
+        function getDistance(touches) {
+            if (touches.length < 2) return 0;
+            const dx = touches[0].clientX - touches[1].clientX;
+            const dy = touches[0].clientY - touches[1].clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        function handleTouchStart(e) {
+            if (e.touches.length === 2) {
+                lastDistance = getDistance(e.touches);
+            }
+        }
+
+        function handleTouchMove(e) {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const currentDistance = getDistance(e.touches);
+                const delta = currentDistance - lastDistance;
+
+                if (delta > 5) {
+                    zoomIn();
+                    lastDistance = currentDistance;
+                } else if (delta < -5) {
+                    zoomOut();
+                    lastDistance = currentDistance;
+                }
+            }
+        }
+
+        // Pan/drag functionality for zoomed images
+        function handleImageMouseDown(e) {
+            if (zoomLevel <= 100) return;
+            isDragging = true;
+            dragStartX = e.clientX - dragOffsetX;
+            dragStartY = e.clientY - dragOffsetY;
+            document.getElementById('modal-image-wrapper').classList.add('dragging');
+        }
+
+        function handleImageMouseMove(e) {
+            if (!isDragging) return;
+            dragOffsetX = e.clientX - dragStartX;
+            dragOffsetY = e.clientY - dragStartY;
+            updateZoom();
+        }
+
+        function handleImageMouseUp() {
+            isDragging = false;
+            document.getElementById('modal-image-wrapper').classList.remove('dragging');
+        }
+
+        // Process uploaded files
+        function processFiles(files) {
+            var imageFiles = Array.from(files).filter(function (f) {
+                return f.type.startsWith('image/');
+            });
+
+            if (imageFiles.length === 0) {
+                showError('Please select image files only.');
+                return;
+            }
+
+            var processed = 0;
+
+            function onImageReady() {
+                processed++;
+                if (processed === imageFiles.length) {
+                    currentSlide = uploadedImages.length - 1;
+                    updateCarousel();
+                    sendCurrentValue();
+                }
+            }
+
+            imageFiles.forEach(function (file) {
+                if (uploadServerURL && uploadFolder) {
+                    uploadToJotform(file, function (url) {
+                        if (url) {
+                            uploadedImages.push({ name: file.name, base64: url });
+                            onImageReady();
+                        } else {
+                            readAsBase64(file, function (dataUri) {
+                                uploadedImages.push({ name: file.name, base64: dataUri });
+                                onImageReady();
+                            });
+                        }
+                    });
+                } else {
+                    readAsBase64(file, function (dataUri) {
+                        uploadedImages.push({ name: file.name, base64: dataUri });
+                        onImageReady();
+                    });
+                }
+            });
+        }
+
+        // Update carousel display
         function updateCarousel() {
             const carousel = document.getElementById('carousel');
             const track = document.getElementById('track');
             const thumbsContainer = document.getElementById('thumbnails');
+            const dropZone = document.getElementById('drop-zone');
             
             if (uploadedImages.length === 0) {
                 carousel.style.display = 'none';
+                dropZone.style.display = 'block';
                 thumbsContainer.innerHTML = '';
                 requestResize();
                 return;
             }
 
+            dropZone.style.display = 'none';
             carousel.style.display = 'block';
             
             if (currentSlide >= uploadedImages.length) {
@@ -706,16 +940,18 @@
                 const slide = document.createElement('div');
                 slide.className = 'carousel-slide';
                 slide.innerHTML = `
-                    <img src="${img.data}" alt="${img.name}" onclick="openLightbox(${index})">
+                    <img src="${img.base64}" alt="${img.name}" onclick="openModal(${index})">
                     <button class="btn-delete" onclick="deleteImage(${index})" title="Remove image">&times;</button>
                     <div class="slide-info">${index + 1} / ${uploadedImages.length}</div>
                 `;
                 track.appendChild(slide);
 
                 const thumb = document.createElement('img');
-                thumb.src = img.data;
+                thumb.src = img.base64;
                 thumb.className = `thumbnail ${index === currentSlide ? 'active' : ''}`;
                 thumb.onclick = () => goToSlide(index);
+                thumb.style.width = widgetSettings.thumbnailSize + 'px';
+                thumb.style.height = widgetSettings.thumbnailSize + 'px';
                 thumbsContainer.appendChild(thumb);
             });
 
@@ -751,80 +987,217 @@
         function deleteImage(index) {
             uploadedImages.splice(index, 1);
             updateCarousel();
-            updateWidgetValue();
+            sendCurrentValue();
         }
 
-        function updateWidgetValue() {
-            const value = uploadedImages.length > 0 ? JSON.stringify(uploadedImages.map(img => ({
-                name: img.name,
-                type: img.type,
-                size: img.size,
-                data: img.data
-            }))) : "";
+        // Modal Functions
+        function openModal(index) {
+            modalCurrentIndex = index;
+            const overlay = document.getElementById('modal-overlay');
+            const image = document.getElementById('modal-image');
             
-            JFCustomWidget.sendData({ value: value });
-        }
-
-        function openLightbox(index) {
-            lightboxCurrentIndex = index;
-            const overlay = document.getElementById('lightbox-overlay');
-            const image = document.getElementById('lightbox-image');
-            
-            image.src = uploadedImages[index].data;
-            updateLightboxCounter();
+            resetZoom();
+            image.src = uploadedImages[index].base64;
+            updateModalCounter();
             overlay.classList.add('active');
             document.body.style.overflow = 'hidden';
-            document.addEventListener('keydown', handleLightboxKeyboard);
+            
+            // Add event listeners
+            document.addEventListener('keydown', handleModalKeyboard);
+            document.addEventListener('wheel', handleMouseWheel, { passive: false });
+            image.addEventListener('mousedown', handleImageMouseDown);
+            document.addEventListener('mousemove', handleImageMouseMove);
+            document.addEventListener('mouseup', handleImageMouseUp);
+            image.addEventListener('touchstart', handleTouchStart);
+            image.addEventListener('touchmove', handleTouchMove, { passive: false });
         }
 
-        function closeLightbox() {
-            const overlay = document.getElementById('lightbox-overlay');
+        function closeModal() {
+            const overlay = document.getElementById('modal-overlay');
             overlay.classList.remove('active');
             document.body.style.overflow = '';
-            document.removeEventListener('keydown', handleLightboxKeyboard);
+            
+            // Remove event listeners
+            document.removeEventListener('keydown', handleModalKeyboard);
+            document.removeEventListener('wheel', handleMouseWheel);
+            const image = document.getElementById('modal-image');
+            image.removeEventListener('mousedown', handleImageMouseDown);
+            document.removeEventListener('mousemove', handleImageMouseMove);
+            document.removeEventListener('mouseup', handleImageMouseUp);
+            image.removeEventListener('touchstart', handleTouchStart);
+            image.removeEventListener('touchmove', handleTouchMove);
         }
 
-        function lightboxPrev() {
-            lightboxCurrentIndex--;
-            if (lightboxCurrentIndex < 0) {
-                lightboxCurrentIndex = uploadedImages.length - 1;
+        function modalPrev() {
+            modalCurrentIndex--;
+            if (modalCurrentIndex < 0) {
+                modalCurrentIndex = uploadedImages.length - 1;
             }
-            updateLightboxImage();
+            updateModalImage();
         }
 
-        function lightboxNext() {
-            lightboxCurrentIndex++;
-            if (lightboxCurrentIndex >= uploadedImages.length) {
-                lightboxCurrentIndex = 0;
+        function modalNext() {
+            modalCurrentIndex++;
+            if (modalCurrentIndex >= uploadedImages.length) {
+                modalCurrentIndex = 0;
             }
-            updateLightboxImage();
+            updateModalImage();
         }
 
-        function updateLightboxImage() {
-            const image = document.getElementById('lightbox-image');
-            image.src = uploadedImages[lightboxCurrentIndex].data;
-            updateLightboxCounter();
+        function updateModalImage() {
+            const image = document.getElementById('modal-image');
+            resetZoom();
+            image.src = uploadedImages[modalCurrentIndex].base64;
+            updateModalCounter();
         }
 
-        function updateLightboxCounter() {
-            const counter = document.getElementById('lightbox-counter-text');
-            counter.textContent = `${lightboxCurrentIndex + 1} / ${uploadedImages.length}`;
+        function updateModalCounter() {
+            const counter = document.getElementById('modal-counter');
+            counter.textContent = `${modalCurrentIndex + 1} / ${uploadedImages.length}`;
         }
 
-        function handleLightboxKeyboard(e) {
+        function handleModalKeyboard(e) {
             if (e.key === 'ArrowLeft') {
-                lightboxPrev();
+                modalPrev();
             } else if (e.key === 'ArrowRight') {
-                lightboxNext();
+                modalNext();
             } else if (e.key === 'Escape') {
-                closeLightbox();
+                closeModal();
             }
         }
 
-        document.getElementById('lightbox-overlay').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeLightbox();
+        // Close modal when clicking overlay background
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('modal-overlay').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+        });
+
+        // File input handling
+        const fileInput = document.getElementById('file-input');
+        const dropZone = document.getElementById('drop-zone');
+
+        fileInput.addEventListener('change', function (e) {
+            if (e.target.files.length) processFiles(e.target.files);
+            e.target.value = '';
+        });
+
+        dropZone.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', function () {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', function (e) {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) processFiles(e.dataTransfer.files);
+        });
+
+        // Jotform widget lifecycle
+        JFCustomWidget.subscribe('ready', function (data) {
+            isRequired = JFCustomWidget.isWidgetRequired();
+            uploadServerURL = data.uploadServerURL || '';
+            if (uploadServerURL) {
+                uploadFolder = generateFolder(data.formID);
             }
+
+            // Static mode — widget is being viewed in tables/submission view
+            var isStatic = JFCustomWidget.isWidgetStatic();
+
+            // Edit mode — form loaded with an existing submission value
+            var isEditMode = data.isEditMode || (data.value && data.value.length > 0);
+
+            // Get widget settings from Jotform
+            var settings = JFCustomWidget.getWidgetSettings();
+            if (settings) {
+                if (settings.carouselHeight) widgetSettings.carouselHeight = parseInt(settings.carouselHeight);
+                if (settings.carouselWidth) widgetSettings.carouselWidth = settings.carouselWidth;
+                if (settings.containerPadding) widgetSettings.containerPadding = parseInt(settings.containerPadding);
+                if (settings.containerOverflow) widgetSettings.containerOverflow = settings.containerOverflow;
+                if (settings.thumbnailSize) widgetSettings.thumbnailSize = parseInt(settings.thumbnailSize);
+                if (settings.thumbnailGap) widgetSettings.thumbnailGap = parseInt(settings.thumbnailGap);
+            }
+
+            // Apply widget settings
+            applyWidgetSettings();
+
+            if (isStatic) {
+                document.body.classList.add('static-mode', 'view-only');
+            } else if (isEditMode) {
+                document.body.classList.add('view-only');
+            }
+
+            // Hide upload element when editLink is present
+            var editLink = data.editLink || false;
+            if (editLink) {
+                document.getElementById('drop-zone').style.display = 'none';
+            }
+
+            // Restore saved value (edit mode or static)
+            if (data.value && JFCustomWidgetUtils.hasMetadata(data.value)) {
+                var extracted = JFCustomWidgetUtils.extractMetadata(data.value);
+                if (extracted && extracted.length > 0) {
+                    uploadedImages = extracted.map(function (item) {
+                        var src = item.base64 || '';
+                        if (!src && item.url) {
+                            src = JFCustomWidgetUtils.fixS3UriOrigin(item.url);
+                        }
+                        return { name: item.name, base64: src };
+                    }).filter(function (img) { return !!img.base64; });
+                    currentSlide = 0;
+                    if (uploadedImages.length > 0) updateCarousel();
+                }
+            }
+
+            // In static mode with no value — show nothing
+            if (isStatic && uploadedImages.length === 0) {
+                document.getElementById('drop-zone').style.display = 'none';
+                requestResize();
+                return;
+            }
+
+            JFCustomWidget.subscribe('submit', function () {
+                var value = buildMetadataValue();
+                var valid = !isRequired || uploadedImages.length > 0;
+
+                if (!valid) {
+                    JFCustomWidget.showWidgetError(JFCustomWidget.texts.required || 'This field is required.');
+                } else {
+                    JFCustomWidget.hideWidgetError();
+                }
+
+                JFCustomWidget.sendSubmit({ valid: valid, value: value });
+            });
+
+            JFCustomWidget.subscribe('clear', function () {
+                uploadedImages = [];
+                currentSlide = 0;
+                document.body.classList.remove('view-only');
+                updateCarousel();
+                sendCurrentValue();
+            });
+
+            requestResize();
+        });
+
+        // Listen for widget settings changes
+        JFCustomWidget.subscribe('settingsUpdated', function (settings) {
+            if (settings.carouselHeight) widgetSettings.carouselHeight = parseInt(settings.carouselHeight);
+            if (settings.carouselWidth) widgetSettings.carouselWidth = settings.carouselWidth;
+            if (settings.containerPadding) widgetSettings.containerPadding = parseInt(settings.containerPadding);
+            if (settings.containerOverflow) widgetSettings.containerOverflow = settings.containerOverflow;
+            if (settings.thumbnailSize) widgetSettings.thumbnailSize = parseInt(settings.thumbnailSize);
+            if (settings.thumbnailGap) widgetSettings.thumbnailGap = parseInt(settings.thumbnailGap);
+
+            applyWidgetSettings();
+            updateCarousel();
+            requestResize();
         });
     </script>
 </body>
