@@ -874,6 +874,11 @@
             updateCarousel();
             requestResize();
         });
+        
+        // Update size of iframe after image load
+        document.addEventListener("DOMContentLoaded", (event) => {
+            requestResize();
+        });    
     </script>
 </body>
 </html>
