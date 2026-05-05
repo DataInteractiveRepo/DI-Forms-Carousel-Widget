@@ -687,13 +687,32 @@
             uploadedImages.forEach((img, index) => {
                 const slide = document.createElement('div');
                 slide.className = 'carousel-slide';
-                slide.innerHTML = `
-                    <img src="${img.base64}" alt="${img.name}" onclick="openModal(${index})">
-                    <button class="btn-delete" onclick="deleteImage(${index})" title="Remove image">&times;</button>
-                    <div class="slide-info">${index + 1} / ${uploadedImages.length}</div>
-                `;
+
+                // Create image element and add onload handler
+                const imageEl = document.createElement('img');
+                imageEl.src = img.base64;
+                imageEl.alt = img.name;
+                imageEl.onclick = function() { openModal(index); };
+                imageEl.onload = requestResize;
+
+                // Add delete button
+                const btnDelete = document.createElement('button');
+                btnDelete.className = 'btn-delete';
+                btnDelete.onclick = function() { deleteImage(index); };
+                btnDelete.title = 'Remove image';
+                btnDelete.innerHTML = '&times;';
+
+                // Slide info
+                const slideInfo = document.createElement('div');
+                slideInfo.className = 'slide-info';
+                slideInfo.textContent = `${index + 1} / ${uploadedImages.length}`;
+
+                slide.appendChild(imageEl);
+                slide.appendChild(btnDelete);
+                slide.appendChild(slideInfo);
                 track.appendChild(slide);
 
+                // Thumbnails
                 const thumb = document.createElement('img');
                 thumb.src = img.base64;
                 thumb.className = `thumbnail ${index === currentSlide ? 'active' : ''}`;
@@ -874,11 +893,12 @@
             updateCarousel();
             requestResize();
         });
-        
+
+        /** C9 Edits **/
         // Update size of iframe after image load
         document.addEventListener("DOMContentLoaded", (event) => {
             requestResize();
-        });    
+        });
     </script>
 </body>
 </html>
