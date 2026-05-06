@@ -283,6 +283,7 @@
             width: 60px;
             height: 60px;
             animation: spin 1s linear infinite;
+            margin: auto;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -656,8 +657,7 @@
                 showError('Please select image files only.');
                 return;
             }
-
-            showSpinner();
+            
             var loadedCount = 0;
             var newImages = [];
 
@@ -963,6 +963,7 @@
             if (settings.thumbnailSize) widgetSettings.thumbnailSize = parseInt(settings.thumbnailSize);
             if (settings.thumbnailGap) widgetSettings.thumbnailGap = parseInt(settings.thumbnailGap);
 
+            showSpinner();
             applyWidgetSettings();
             updateCarousel();
             requestResize();
