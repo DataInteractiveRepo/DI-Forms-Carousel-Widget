@@ -298,13 +298,10 @@
             margin: auto;
         }
 
-        @media (prefers-color-scheme: dark) {
-            #spinner-overlay { background: #121212; }
-        }
-        
         @keyframes fade {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
+            0% { opacity: 1; }
+            50% { opacity: 0.5;}
+            100% { opacity: 0; }
         }
 
         @keyframes spin {
@@ -721,6 +718,7 @@
                 carousel.style.display = 'none';
                 dropZone.style.display = 'block';
                 thumbsContainer.innerHTML = '';
+                hideSpinner();
                 requestResize();
                 return;
             }
