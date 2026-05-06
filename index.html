@@ -271,7 +271,7 @@
         #carousel { height: auto !important;  }
 
         /* Hide navigation and info in static mode */
-        .view-only #drop-zone { display: none; }
+        #drop-zone { display: none; }
 
         /* Spinner styles */
         #spinner-overlay {
@@ -325,7 +325,7 @@
 <body>
     <div class="widget-container">
         <!-- Upload Area -->
-        <div class="upload-area" id="drop-zone">
+        <div class="upload-area inactive" id="drop-zone">
             <div class="upload-area-content">
                 <div class="upload-icon">📸</div>
                 <div class="upload-text">Drag & drop images here</div>
@@ -719,13 +719,11 @@
             document.getElementById('debugger').textContent = 'Images in carousel: ' + uploadedImages.length;
             
             if (uploadedImages.length == 0) {
-                setTimeout(function(){
-                    carousel.style.display = 'none';
-                    dropZone.style.display = 'block';
-                    thumbsContainer.innerHTML = '';
-                    hideSpinner();
-                    document.getElementById('debugger').textContent = 'No images uploaded, showing drop zone.';
-                }, 500);
+                carousel.style.display = 'none';
+                dropZone.style.display = 'block';
+                thumbsContainer.innerHTML = '';
+                hideSpinner();
+                document.getElementById('debugger').textContent = 'No images uploaded, showing drop zone.';
                 requestResize();
                 return;
             }
@@ -896,7 +894,8 @@
                         return { name: item.name, base64: src };
                     }).filter(function (img) { return !!img.base64; });
                     currentSlide = 0;
-                    if (uploadedImages.length > 0) updateCarousel();
+                    // if (uploadedImages.length > 0) updateCarousel();
+                    updateCarousel();
                 }
             }
 
