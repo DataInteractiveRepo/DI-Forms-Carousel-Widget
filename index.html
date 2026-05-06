@@ -273,6 +273,22 @@
         /* Hide navigation and info in static mode */
         #drop-zone { display: none; }
 
+        /* Spinner styles */
+        #spinner-overlay { display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(255,255,255,0.7); align-items: center; justify-content: center; }
+        #spinner-overlay.active { display: flex !important; }
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #00A6E9;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         /* Responsive Design */
         @media (max-width: 480px) {
             .carousel-container {
@@ -302,6 +318,11 @@
         <div class="error-msg" id="error-msg"></div>
 
         <!-- Carousel Area -->
+        <!-- Spinner Overlay -->
+        <div id="spinner-overlay">
+            <div class="spinner"></div>
+        </div>
+
         <div class="carousel-container" id="carousel">
             <button class="nav-btn nav-prev" id="btn-prev" onclick="moveSlide(-1)">&#10094;</button>
             <button class="nav-btn nav-next" id="btn-next" onclick="moveSlide(1)">&#10095;</button>
@@ -314,6 +335,13 @@
     </div>
 
     <script>
+        function showSpinner() {
+            document.getElementById('spinner-overlay').classList.add('active');
+        }
+        function hideSpinner() {
+            document.getElementById('spinner-overlay').classList.remove('active');
+        }
+
         let uploadedImages = [];
         let currentSlide = 0;
         let isRequired = false;
@@ -629,46 +657,88 @@
                 return;
             }
 
-            var processed = 0;
+            showSpinner();
+            var loadedCount = 0;
+            var newImages = [];
 
-            function onImageReady() {
-                processed++;
-                if (processed === imageFiles.length) {
+            function onImageLoaded() {
+                loadedCount++;
+                if (loadedCount === imageFiles.length) {
+                    // Add all loaded images at once
+                    uploadedImages = uploadedImages.concat(newImages);
                     currentSlide = uploadedImages.length - 1;
-                    updateCarousel();
+                    updateCarouselWithSpinner();
                     sendCurrentValue();
                 }
             }
 
-            imageFiles.forEach(function (file) {
+            imageFiles.forEach(function (file, idx) {
                 if (uploadServerURL && uploadFolder) {
                     uploadToJotform(file, function (url) {
                         if (url) {
-                            uploadedImages.push({ name: file.name, base64: url });
-                            onImageReady();
+                            newImages[idx] = { name: file.name, base64: url };
+                            onImageLoaded();
                         } else {
                             readAsBase64(file, function (dataUri) {
-                                uploadedImages.push({ name: file.name, base64: dataUri });
-                                onImageReady();
+                                newImages[idx] = { name: file.name, base64: dataUri };
+                                onImageLoaded();
                             });
                         }
                     });
                 } else {
                     readAsBase64(file, function (dataUri) {
-                        uploadedImages.push({ name: file.name, base64: dataUri });
-                        onImageReady();
+                        newImages[idx] = { name: file.name, base64: dataUri };
+                        onImageLoaded();
                     });
                 }
             });
         }
 
-        // Update carousel display
+        // Helper to update carousel and handle spinner
+        function updateCarouselWithSpinner() {
+            // Hide carousel and thumbnails initially
+            document.getElementById('carousel').style.display = 'none';
+            document.getElementById('thumbnails').style.display = 'none';
+            if (uploadedImages.length === 0) {
+                hideSpinner();
+                updateCarousel();
+                return;
+            }
+
+            let imagesToLoad = uploadedImages.length;
+            let loaded = 0;
+            // Preload all images
+            uploadedImages.forEach(function(img) {
+                var tempImg = new window.Image();
+                tempImg.onload = function() {
+                    loaded++;
+                    if (loaded === imagesToLoad) {
+                        hideSpinner();
+                        document.getElementById('carousel').style.display = 'block';
+                        document.getElementById('thumbnails').style.display = '';
+                        updateCarousel();
+                    }
+                };
+                tempImg.onerror = function() {
+                    loaded++;
+                    if (loaded === imagesToLoad) {
+                        hideSpinner();
+                        document.getElementById('carousel').style.display = 'block';
+                        document.getElementById('thumbnails').style.display = '';
+                        updateCarousel();
+                    }
+                };
+                tempImg.src = img.base64;
+            });
+        }
+
+        // Update carousel display (original, used after spinner)
         function updateCarousel() {
             const carousel = document.getElementById('carousel');
             const track = document.getElementById('track');
             const thumbsContainer = document.getElementById('thumbnails');
             const dropZone = document.getElementById('drop-zone');
-            
+
             if (uploadedImages.length === 0) {
                 carousel.style.display = 'none';
                 dropZone.style.display = 'block';
@@ -679,7 +749,8 @@
 
             dropZone.style.display = 'none';
             carousel.style.display = 'block';
-            
+            thumbsContainer.style.display = '';
+
             if (currentSlide >= uploadedImages.length) {
                 currentSlide = Math.max(0, uploadedImages.length - 1);
             }
