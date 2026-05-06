@@ -877,6 +877,7 @@
                 document.body.classList.add('static-mode', 'view-only');
             } else if (isEditMode) {
                 document.body.classList.add('view-only');
+                updateCarousel();
             }
 
             // Hide upload element when editLink is present
