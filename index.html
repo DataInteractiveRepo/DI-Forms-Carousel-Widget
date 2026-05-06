@@ -271,7 +271,7 @@
         #carousel { height: auto !important;  }
 
         /* Hide navigation and info in static mode */
-        .view-only #drop-zone { display: none; }
+        #drop-zone { display: none; }
 
         /* Spinner styles */
         #spinner-overlay {
@@ -336,6 +336,8 @@
         </div>
 
         <div class="error-msg" id="error-msg"></div>
+
+        <div id="debugger"></div>
 
         <!-- Spinner Overlay -->
         <div id="spinner-overlay" class="active">
@@ -714,12 +716,14 @@
             const thumbsContainer = document.getElementById('thumbnails');
             const dropZone = document.getElementById('drop-zone');
             
-            if (uploadedImages.length === 0) {
-                carousel.style.display = 'none';
-                dropZone.style.display = 'block';
-                thumbsContainer.innerHTML = '';
-                alert('No images uploaded. Please add images to view the carousel.');
-                hideSpinner();
+            if (uploadedImages.length == 0) {
+                setTimeout(function(){
+                    carousel.style.display = 'none';
+                    dropZone.style.display = 'block';
+                    thumbsContainer.innerHTML = '';
+                    hideSpinner();
+                    document.getElementById('debugger').textContent = 'No images uploaded, showing drop zone.';
+                }, 500);
                 requestResize();
                 return;
             }
