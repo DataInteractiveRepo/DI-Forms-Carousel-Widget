@@ -693,7 +693,7 @@
                 imageEl.src = img.base64;
                 imageEl.alt = img.name;
                 imageEl.onclick = function() { openModal(index); };
-                imageEl.onload = requestResize;
+                // imageEl.onload = requestResize;
 
                 // Add delete button
                 const btnDelete = document.createElement('button');
@@ -877,7 +877,7 @@
                     });
                 });
                 observer.observe(document.querySelector('.widget-container'));
-}
+            }
         });
 
         // Listen for widget settings changes
@@ -891,12 +891,6 @@
 
             applyWidgetSettings();
             updateCarousel();
-            requestResize();
-        });
-
-        /** C9 Edits **/
-        // Update size of iframe after image load
-        document.addEventListener("DOMContentLoaded", (event) => {
             requestResize();
         });
     </script>
