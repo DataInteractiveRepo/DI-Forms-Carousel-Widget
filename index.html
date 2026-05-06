@@ -894,9 +894,10 @@
                         return { name: item.name, base64: src };
                     }).filter(function (img) { return !!img.base64; });
                     currentSlide = 0;
-                    // if (uploadedImages.length > 0) updateCarousel();
-                    updateCarousel();
+                    if (uploadedImages.length > 0) updateCarousel();
                 }
+            } else {
+                updateCarousel();
             }
 
             // In static mode with no value — show nothing
