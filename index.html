@@ -271,7 +271,7 @@
         #carousel { height: auto !important;  }
 
         /* Hide navigation and info in static mode */
-        #drop-zone { display: none; }
+        .view-only #drop-zone { display: none; }
 
         /* Spinner styles */
         #spinner-overlay {
@@ -716,7 +716,6 @@
             const thumbsContainer = document.getElementById('thumbnails');
             const dropZone = document.getElementById('drop-zone');
 
-
             document.getElementById('debugger').textContent = 'Images in carousel: ' + uploadedImages.length;
             
             if (uploadedImages.length == 0) {
@@ -877,7 +876,6 @@
                 document.body.classList.add('static-mode', 'view-only');
             } else if (isEditMode) {
                 document.body.classList.add('view-only');
-                updateCarousel();
             }
 
             // Hide upload element when editLink is present
