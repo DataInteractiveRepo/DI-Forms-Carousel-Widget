@@ -270,6 +270,9 @@
 
         #carousel { height: auto !important;  }
 
+        /* Hide navigation and info in static mode */
+        #drop-zone { display: none; }
+
         /* Responsive Design */
         @media (max-width: 480px) {
             .carousel-container {
@@ -693,7 +696,7 @@
                 imageEl.src = img.base64;
                 imageEl.alt = img.name;
                 imageEl.onclick = function() { openModal(index); };
-                // imageEl.onload = requestResize;
+                imageEl.onload = requestResize;
 
                 // Add delete button
                 const btnDelete = document.createElement('button');
