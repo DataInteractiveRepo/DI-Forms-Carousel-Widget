@@ -715,6 +715,9 @@
             const track = document.getElementById('track');
             const thumbsContainer = document.getElementById('thumbnails');
             const dropZone = document.getElementById('drop-zone');
+
+
+            document.getElementById('debugger').textContent = 'Images in carousel: ' + uploadedImages.length;
             
             if (uploadedImages.length == 0) {
                 setTimeout(function(){
