@@ -274,7 +274,19 @@
         #drop-zone { display: none; }
 
         /* Spinner styles */
-        #spinner-overlay { display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(255,255,255,0.7); align-items: center; justify-content: center; }
+        #spinner-overlay {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #ffffff;
+            align-items: center;
+            justify-content: center;
+            animation: fade 1.2s ease-in-out infinite;
+        }
         #spinner-overlay.active { display: flex !important; }
         .spinner {
             border: 8px solid #f3f3f3;
@@ -285,6 +297,16 @@
             animation: spin 1s linear infinite;
             margin: auto;
         }
+
+        @media (prefers-color-scheme: dark) {
+            #spinner-overlay { background: #121212; }
+        }
+        
+        @keyframes fade {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
