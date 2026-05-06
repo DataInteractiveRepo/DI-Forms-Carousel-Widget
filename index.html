@@ -288,6 +288,9 @@
             animation: fade 1.2s ease-in-out infinite;
         }
         #spinner-overlay.active { display: flex !important; }
+        #spinner-overlay.fade {
+            animation: fade 1.5s ease-in-out infinite;
+        }
         .spinner {
             border: 8px solid #f3f3f3;
             border-top: 8px solid #00A6E9;
@@ -296,6 +299,10 @@
             height: 60px;
             animation: spin 1s linear infinite;
             margin: auto;
+        }
+
+        body:not(.view-only) #spinner-overlay {
+            display: none!important;
         }
 
         @keyframes fade {
@@ -337,8 +344,6 @@
 
         <div class="error-msg" id="error-msg"></div>
 
-        <div id="debugger"></div>
-
         <!-- Spinner Overlay -->
         <div id="spinner-overlay" class="active">
             <div class="spinner"></div>
@@ -376,6 +381,7 @@
 
         function hideSpinner() {
             document.getElementById('spinner-overlay').classList.remove('active');
+            document.getElementById('spinner-overlay').classList.add('fade');
         }
 
         // Generate a folder ID matching Jotform's format: formID_hexTimestamp+seed
@@ -716,7 +722,7 @@
             const thumbsContainer = document.getElementById('thumbnails');
             const dropZone = document.getElementById('drop-zone');
 
-            document.getElementById('debugger').textContent = 'Images in carousel: ' + uploadedImages.length;
+            // document.getElementById('debugger').textContent = 'Images in carousel: ' + uploadedImages.length;
             
             if (uploadedImages.length == 0) {
                 carousel.style.display = 'none';
@@ -726,10 +732,10 @@
                 if(document.body.classList.contains('view-only')) {
                     dropZone.style.display = 'none';
                 }
-                
+
                 thumbsContainer.innerHTML = '';
                 hideSpinner();
-                document.getElementById('debugger').textContent = 'No images uploaded, showing drop zone.';
+                // document.getElementById('debugger').textContent = 'No images uploaded, showing drop zone.';
                 requestResize();
                 return;
             }
