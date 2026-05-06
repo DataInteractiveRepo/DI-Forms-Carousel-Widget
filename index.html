@@ -657,7 +657,8 @@
                 showError('Please select image files only.');
                 return;
             }
-            
+
+            showSpinner(); // Ensure spinner is shown before processing
             var loadedCount = 0;
             var newImages = [];
 
@@ -696,7 +697,8 @@
 
         // Helper to update carousel and handle spinner
         function updateCarouselWithSpinner() {
-            // Hide carousel and thumbnails initially
+            // Always show spinner overlay while loading
+            showSpinner();
             document.getElementById('carousel').style.display = 'none';
             document.getElementById('thumbnails').style.display = 'none';
             if (uploadedImages.length === 0) {
