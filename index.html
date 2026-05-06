@@ -325,7 +325,7 @@
 <body>
     <div class="widget-container">
         <!-- Upload Area -->
-        <div class="upload-area inactive" id="drop-zone">
+        <div class="upload-area" id="drop-zone">
             <div class="upload-area-content">
                 <div class="upload-icon">📸</div>
                 <div class="upload-text">Drag & drop images here</div>
@@ -721,6 +721,12 @@
             if (uploadedImages.length == 0) {
                 carousel.style.display = 'none';
                 dropZone.style.display = 'block';
+
+                //Hide if there are no images and we're in view-only mode (e.g. tables/submission view)
+                if(document.body.classList.contains('view-only')) {
+                    dropZone.style.display = 'none';
+                }
+                
                 thumbsContainer.innerHTML = '';
                 hideSpinner();
                 document.getElementById('debugger').textContent = 'No images uploaded, showing drop zone.';
