@@ -336,12 +336,8 @@
     </div>
 
     <script>
-        function showSpinner() {
-            document.getElementById('spinner-overlay').classList.add('active');
-            console.log('[showSpinner] Spinner shown');
-        }
         function hideSpinner() {
-            // document.getElementById('spinner-overlay').classList.remove('active');
+            document.getElementById('spinner-overlay').classList.remove('active');
         }
 
         let uploadedImages = [];
@@ -659,7 +655,6 @@
                 return;
             }
 
-            showSpinner(); // Ensure spinner is shown before processing
             var loadedCount = 0;
             var newImages = [];
 
@@ -698,8 +693,6 @@
 
         // Helper to update carousel and handle spinner
         function updateCarouselWithSpinner() {
-            // Always show spinner overlay while loading
-            showSpinner();
             document.getElementById('carousel').style.display = 'none';
             document.getElementById('thumbnails').style.display = 'none';
             if (uploadedImages.length === 0) {
@@ -966,7 +959,6 @@
             if (settings.thumbnailSize) widgetSettings.thumbnailSize = parseInt(settings.thumbnailSize);
             if (settings.thumbnailGap) widgetSettings.thumbnailGap = parseInt(settings.thumbnailGap);
 
-            showSpinner();
             applyWidgetSettings();
             updateCarousel();
             requestResize();
