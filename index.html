@@ -395,7 +395,12 @@
         let modalCurrentIndex = 0;
         let uploadServerURL = '';
         let uploadFolder = '';
-        let allowSubmissionEditUpload = false;
+        let allowTechnicianUpload = false;
+
+        function hasTechnicianParam() {
+            var params = new URLSearchParams(window.location.search || '');
+            return params.has('technician') || params.has('techinician');
+        }
 
         // Widget Settings Configuration
         let widgetSettings = {
@@ -919,17 +924,17 @@
             // Apply widget settings
             applyWidgetSettings();
 
-            allowSubmissionEditUpload = isEditMode && !isStatic;
+            allowTechnicianUpload = isEditMode && hasTechnicianParam();
 
             if (isStatic) {
                 document.body.classList.add('static-mode', 'view-only');
-            } else if (!allowSubmissionEditUpload && isEditMode) {
+            } else if (isEditMode && !allowTechnicianUpload) {
                 document.body.classList.add('view-only');
             }
 
             // Hide upload element when editLink is present
             var editLink = data.editLink || false;
-            if (editLink && !allowSubmissionEditUpload) {
+            if (editLink && !allowTechnicianUpload) {
                 document.getElementById('drop-zone').style.display = 'none';
             }
 
