@@ -106,6 +106,30 @@
             box-shadow: 0 6px 16px rgba(0, 166, 233, 0.4);
         }
 
+        .add-photo-btn {
+            display: none;
+            position: absolute;
+            right: 12px;
+            bottom: 12px;
+            width: 42px;
+            height: 42px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00A6E9 0%, #004B88 100%);
+            color: #fff;
+            font-size: 28px;
+            line-height: 1;
+            cursor: pointer;
+            z-index: 20;
+            box-shadow: 0 4px 12px rgba(0, 166, 233, 0.35);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .add-photo-btn:hover {
+            transform: scale(1.08);
+        }
+
         /* Carousel Styles */
         .carousel-container {
             position: relative;
@@ -262,11 +286,13 @@
         /* View-only mode — no delete, no add, no thumbnails strip actions */
         body.view-only .btn-delete { display: none; }
         body.view-only .thumbnails { background: transparent; }
+        body.view-only .add-photo-btn { display: none !important; }
 
         /* Static/table mode — single image, compact */
         body.static-mode .carousel-container { height: 160px; }
         body.static-mode .thumbnails { display: none; }
         body.static-mode .btn-delete { display: none; }
+        body.static-mode .add-photo-btn { display: none !important; }
 
         #carousel { height: auto !important;  }
 
@@ -356,6 +382,8 @@
             <div class="carousel-track" id="track"></div>
         </div>
 
+        <button id="add-photo-btn" class="add-photo-btn" type="button" title="Add photo">+</button>
+
         <!-- Thumbnails -->
         <div class="thumbnails" id="thumbnails"></div>
     </div>
@@ -367,6 +395,7 @@
         let modalCurrentIndex = 0;
         let uploadServerURL = '';
         let uploadFolder = '';
+        let allowSubmissionEditUpload = false;
 
         // Widget Settings Configuration
         let widgetSettings = {
@@ -720,16 +749,19 @@
             const track = document.getElementById('track');
             const thumbsContainer = document.getElementById('thumbnails');
             const dropZone = document.getElementById('drop-zone');
+            const addPhotoBtn = document.getElementById('add-photo-btn');
 
             // document.getElementById('debugger').textContent = 'Images in carousel: ' + uploadedImages.length;
             
             if (uploadedImages.length == 0) {
                 carousel.style.display = 'none';
-                dropZone.style.display = 'block';
+                addPhotoBtn.style.display = 'none';
 
                 //Hide if there are no images and we're in view-only mode (e.g. tables/submission view)
                 if(document.body.classList.contains('view-only')) {
                     dropZone.style.display = 'none';
+                } else {
+                    dropZone.style.display = 'block';
                 }
 
                 thumbsContainer.innerHTML = '';
@@ -741,6 +773,7 @@
 
             dropZone.style.display = 'none';
             carousel.style.display = 'block';
+            addPhotoBtn.style.display = document.body.classList.contains('view-only') ? 'none' : 'flex';
             
             if (currentSlide >= uploadedImages.length) {
                 currentSlide = Math.max(0, uploadedImages.length - 1);
@@ -832,6 +865,11 @@
         // File input handling
         const fileInput = document.getElementById('file-input');
         const dropZone = document.getElementById('drop-zone');
+        const addPhotoBtn = document.getElementById('add-photo-btn');
+
+        addPhotoBtn.addEventListener('click', function () {
+            fileInput.click();
+        });
 
         fileInput.addEventListener('change', function (e) {
             if (e.target.files.length) processFiles(e.target.files);
@@ -881,15 +919,17 @@
             // Apply widget settings
             applyWidgetSettings();
 
+            allowSubmissionEditUpload = isEditMode && !isStatic;
+
             if (isStatic) {
                 document.body.classList.add('static-mode', 'view-only');
-            } else if (isEditMode) {
+            } else if (!allowSubmissionEditUpload && isEditMode) {
                 document.body.classList.add('view-only');
             }
 
             // Hide upload element when editLink is present
             var editLink = data.editLink || false;
-            if (editLink) {
+            if (editLink && !allowSubmissionEditUpload) {
                 document.getElementById('drop-zone').style.display = 'none';
             }
 
