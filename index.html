@@ -283,6 +283,38 @@
         }
         .error-msg.visible { display: block; }
 
+        .upload-progress {
+            display: none;
+            margin: 8px 0 14px;
+            width: 100%;
+        }
+
+        .upload-progress.visible {
+            display: block;
+        }
+
+        .upload-progress-label {
+            color: #1D174F;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .upload-progress-track {
+            width: 100%;
+            height: 10px;
+            background: #dbe9f5;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .upload-progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #00A6E9 0%, #004B88 100%);
+            transition: width 0.2s ease;
+        }
+
         /* View-only mode — no delete, no add, no thumbnails strip actions */
         body.view-only .btn-delete { display: none; }
         body.view-only .thumbnails { background: transparent; }
@@ -368,6 +400,12 @@
         </div>
 
         <div class="error-msg" id="error-msg"></div>
+        <div class="upload-progress" id="upload-progress">
+            <div class="upload-progress-label" id="upload-progress-label">Uploading 0%</div>
+            <div class="upload-progress-track">
+                <div class="upload-progress-fill" id="upload-progress-fill"></div>
+            </div>
+        </div>
         <div id="debug"></div>
 
         <!-- Spinner Overlay -->
@@ -397,6 +435,27 @@
         let uploadServerURL = '';
         let uploadFolder = '';
         let allowSubmissionEditUpload = false;
+
+        function showUploadProgress() {
+            document.getElementById('upload-progress').classList.add('visible');
+        }
+
+        function hideUploadProgress() {
+            document.getElementById('upload-progress').classList.remove('visible');
+        }
+
+        function setUploadProgress(percent, completed, total) {
+            var safePercent = Math.max(0, Math.min(100, Math.round(percent || 0)));
+            var fill = document.getElementById('upload-progress-fill');
+            var label = document.getElementById('upload-progress-label');
+
+            fill.style.width = safePercent + '%';
+            if (typeof completed === 'number' && typeof total === 'number') {
+                label.textContent = 'Uploading ' + safePercent + '% (' + completed + '/' + total + ')';
+            } else {
+                label.textContent = 'Uploading ' + safePercent + '%';
+            }
+        }
 
         function getRoleFromData(data) {
             var candidates = [
@@ -451,32 +510,51 @@
         }
 
         // Upload file to Jotform server
-        function uploadToJotform(file, callback) {
+        function uploadToJotform(file, callback, onProgress) {
             var origin = uploadServerURL.replace('/upload', '');
             var url = origin + '/server.php?action=handleWidgetFiles&type=save';
 
             var formData = new FormData();
             formData.append('file', file, file.name);
 
-            fetch(url, {
-                method: 'POST',
-                body: formData
-            })
-            .then(function (res) { return res.json(); })
-            .then(function (response) {
-                console.log('[uploadToJotform] response:', JSON.stringify(response));
-                if (response && response.success && response.message) {
-                    callback(response.message);
-                } else {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', url, true);
+
+            xhr.upload.onprogress = function (e) {
+                if (e.lengthComputable && typeof onProgress === 'function') {
+                    onProgress((e.loaded / e.total) * 100);
+                }
+            };
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState !== 4) return;
+                try {
+                    var response = JSON.parse(xhr.responseText || '{}');
+                    console.log('[uploadToJotform] response:', JSON.stringify(response));
+                    if (response && response.success && response.message) {
+                        callback(response.message);
+                    } else {
+                        callback(null);
+                    }
+                } catch (e) {
                     callback(null);
                 }
-            })
-            .catch(function () { callback(null); });
+            };
+
+            xhr.onerror = function () { callback(null); };
+            xhr.send(formData);
         }
 
         // Read file as base64
-        function readAsBase64(file, onDone) {
+        function readAsBase64(file, onDone, onProgress) {
             var reader = new FileReader();
+
+            reader.onprogress = function (e) {
+                if (e.lengthComputable && typeof onProgress === 'function') {
+                    onProgress((e.loaded / e.total) * 100);
+                }
+            };
+
             reader.onload = function (e) {
                 onDone(e.target.result);
             };
@@ -728,34 +806,61 @@
                 return;
             }
 
+            var fileProgress = new Array(imageFiles.length).fill(0);
             var processed = 0;
+
+            showUploadProgress();
+            setUploadProgress(0, 0, imageFiles.length);
+
+            function refreshOverallProgress() {
+                var totalPercent = fileProgress.reduce(function (sum, p) { return sum + p; }, 0);
+                var averagePercent = totalPercent / imageFiles.length;
+                setUploadProgress(averagePercent, processed, imageFiles.length);
+            }
+
+            function updateFileProgress(index, percent) {
+                fileProgress[index] = Math.max(fileProgress[index], percent || 0);
+                refreshOverallProgress();
+            }
 
             function onImageReady() {
                 processed++;
+                setUploadProgress((processed / imageFiles.length) * 100, processed, imageFiles.length);
                 if (processed === imageFiles.length) {
+                    setUploadProgress(100, processed, imageFiles.length);
+                    setTimeout(function () { hideUploadProgress(); }, 400);
                     currentSlide = uploadedImages.length - 1;
                     updateCarousel();
                     sendCurrentValue();
                 }
             }
 
-            imageFiles.forEach(function (file) {
+            imageFiles.forEach(function (file, index) {
                 if (uploadServerURL && uploadFolder) {
                     uploadToJotform(file, function (url) {
                         if (url) {
+                            updateFileProgress(index, 100);
                             uploadedImages.push({ name: file.name, base64: url });
                             onImageReady();
                         } else {
                             readAsBase64(file, function (dataUri) {
+                                updateFileProgress(index, 100);
                                 uploadedImages.push({ name: file.name, base64: dataUri });
                                 onImageReady();
+                            }, function (percent) {
+                                updateFileProgress(index, percent);
                             });
                         }
+                    }, function (percent) {
+                        updateFileProgress(index, percent);
                     });
                 } else {
                     readAsBase64(file, function (dataUri) {
+                        updateFileProgress(index, 100);
                         uploadedImages.push({ name: file.name, base64: dataUri });
                         onImageReady();
+                    }, function (percent) {
+                        updateFileProgress(index, percent);
                     });
                 }
             });
