@@ -920,7 +920,7 @@
             // Static mode — widget is being viewed in tables/submission view
             var isStatic = JFCustomWidget.isWidgetStatic();
             var userRole = getRoleFromData(data);
-            var isClientSession = userRole === 'client';
+            var isTechnicianSession = userRole === 'technician';
 
             var dataDebugLines = Object.keys(data || {}).map(function (key) {
                 var value = data[key];
@@ -962,7 +962,8 @@
             // Apply widget settings
             applyWidgetSettings();
 
-            allowSubmissionEditUpload = isEditMode && !isStatic && !isClientSession;
+            // Default-deny in edit mode unless role is explicitly technician.
+            allowSubmissionEditUpload = isEditMode && !isStatic && isTechnicianSession;
 
             if (isStatic) {
                 document.body.classList.add('static-mode', 'view-only');
