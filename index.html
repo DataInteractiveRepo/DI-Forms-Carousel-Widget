@@ -421,13 +421,14 @@
             <div class="carousel-track" id="track"></div>
         </div>
 
-        <button id="add-photo-btn" class="add-photo-btn" type="button" title="Add photo">+</button>
+        <button id="add-photo-btn" class="add-photo-btn" type="button" title="Add photo">+ Add Photo</button>
 
         <!-- Thumbnails -->
         <div class="thumbnails" id="thumbnails"></div>
     </div>
 
     <script>
+        let enableDebug = false;
         let uploadedImages = [];
         let currentSlide = 0;
         let isRequired = false;
@@ -874,7 +875,9 @@
             const dropZone = document.getElementById('drop-zone');
             const addPhotoBtn = document.getElementById('add-photo-btn');
 
-            // document.getElementById('debugger').textContent = 'Images in carousel: ' + uploadedImages.length;
+            if(enableDebug){
+                document.getElementById('debug').textContent = 'Images in carousel: ' + uploadedImages.length;
+            }
             
             if (uploadedImages.length == 0) {
                 carousel.style.display = 'none';
@@ -889,7 +892,9 @@
 
                 thumbsContainer.innerHTML = '';
                 hideSpinner();
-                // document.getElementById('debugger').textContent = 'No images uploaded, showing drop zone.';
+                if(enableDebug){
+                    document.getElementById('debug').textContent = 'No images uploaded, showing drop zone.';
+                }
                 requestResize();
                 return;
             }
@@ -1027,28 +1032,31 @@
             var userRole = getRoleFromData(data);
             var isTechnicianSession = userRole === 'technician';
 
-            var dataDebugLines = Object.keys(data || {}).map(function (key) {
-                var value = data[key];
-                if (value === undefined) return key + ': undefined';
-                if (value === null) return key + ': null';
-                if (typeof value === 'object') {
-                    try {
-                        return key + ': ' + JSON.stringify(value);
-                    } catch (e) {
-                        return key + ': [object]';
+            //Output debug info if enabled
+            if(enableDebug){
+                var dataDebugLines = Object.keys(data || {}).map(function (key) {
+                    var value = data[key];
+                    if (value === undefined) return key + ': undefined';
+                    if (value === null) return key + ': null';
+                    if (typeof value === 'object') {
+                        try {
+                            return key + ': ' + JSON.stringify(value);
+                        } catch (e) {
+                            return key + ': [object]';
+                        }
                     }
-                }
-                return key + ': ' + String(value);
-            });
+                    return key + ': ' + String(value);
+                });
 
-            document.getElementById('debug').innerHTML =
-                'isStatic: ' + isStatic +
-                '<br>isEditMode: ' + data.isEditMode +
-                '<br>userRole: ' + (userRole || '(none)') +
-                '<br>value length: ' + (data.value ? data.value.length : 0) +
-                '<br>editLink: ' + (data.editLink || false) +
-                '<br><br><strong>All data properties:</strong><br>' +
-                (dataDebugLines.length ? dataDebugLines.join('<br>') : '(no properties)');
+                document.getElementById('debug').innerHTML =
+                    'isStatic: ' + isStatic +
+                    '<br>isEditMode: ' + data.isEditMode +
+                    '<br>userRole: ' + (userRole || '(none)') +
+                    '<br>value length: ' + (data.value ? data.value.length : 0) +
+                    '<br>editLink: ' + (data.editLink || false) +
+                    '<br><br><strong>All data properties:</strong><br>' +
+                    (dataDebugLines.length ? dataDebugLines.join('<br>') : '(no properties)');
+            }
 
             // Edit mode — form loaded with an existing submission value
             var isEditMode = data.isEditMode || (data.value && data.value.length > 0);
