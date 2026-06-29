@@ -111,19 +111,27 @@
             position: absolute;
             right: 12px;
             bottom: 12px;
-            width: 42px;
-            height: 42px;
+            min-height: 42px;
             border: none;
-            border-radius: 50%;
+            border-radius: 999px;
             background: linear-gradient(135deg, #00A6E9 0%, #004B88 100%);
             color: #fff;
-            font-size: 28px;
+            font-size: 13px;
+            font-weight: 700;
             line-height: 1;
+            padding: 0 14px;
             cursor: pointer;
             z-index: 20;
             box-shadow: 0 4px 12px rgba(0, 166, 233, 0.35);
             align-items: center;
             justify-content: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .add-photo-icon {
+            font-size: 20px;
+            line-height: 1;
         }
 
         .add-photo-btn:hover {
@@ -421,7 +429,10 @@
             <div class="carousel-track" id="track"></div>
         </div>
 
-        <button id="add-photo-btn" class="add-photo-btn" type="button" title="Add photo">+ Add Photo</button>
+        <button id="add-photo-btn" class="add-photo-btn" type="button" title="Add photo" aria-label="Add Photo">
+            <span class="add-photo-icon">+</span>
+            <span>Add Photo</span>
+        </button>
 
         <!-- Thumbnails -->
         <div class="thumbnails" id="thumbnails"></div>
