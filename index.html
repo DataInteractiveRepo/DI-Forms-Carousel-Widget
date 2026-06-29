@@ -903,7 +903,27 @@
             // Static mode — widget is being viewed in tables/submission view
             var isStatic = JFCustomWidget.isWidgetStatic();
 
-            document.getElementById('debug').innerHTML = 'isStatic: ' + isStatic + '<br>isEditMode: ' + data.isEditMode + '<br>value length: ' + (data.value ? data.value.length : 0) + '<br>editLink: ' + (data.editLink || false);
+            var dataDebugLines = Object.keys(data || {}).map(function (key) {
+                var value = data[key];
+                if (value === undefined) return key + ': undefined';
+                if (value === null) return key + ': null';
+                if (typeof value === 'object') {
+                    try {
+                        return key + ': ' + JSON.stringify(value);
+                    } catch (e) {
+                        return key + ': [object]';
+                    }
+                }
+                return key + ': ' + String(value);
+            });
+
+            document.getElementById('debug').innerHTML =
+                'isStatic: ' + isStatic +
+                '<br>isEditMode: ' + data.isEditMode +
+                '<br>value length: ' + (data.value ? data.value.length : 0) +
+                '<br>editLink: ' + (data.editLink || false) +
+                '<br><br><strong>All data properties:</strong><br>' +
+                (dataDebugLines.length ? dataDebugLines.join('<br>') : '(no properties)');
 
             // Edit mode — form loaded with an existing submission value
             var isEditMode = data.isEditMode || (data.value && data.value.length > 0);
