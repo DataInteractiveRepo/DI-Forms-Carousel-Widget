@@ -398,6 +398,23 @@
         let uploadFolder = '';
         let allowSubmissionEditUpload = false;
 
+        function getRoleFromData(data) {
+            var candidates = [
+                data && data.sid,
+                data && data.editLink,
+                window.location.search
+            ];
+
+            for (var i = 0; i < candidates.length; i++) {
+                var text = String(candidates[i] || '').toLowerCase();
+                if (!text) continue;
+                if (text.indexOf('?technician') !== -1 || text.indexOf('&technician') !== -1) return 'technician';
+                if (text.indexOf('?client') !== -1 || text.indexOf('&client') !== -1) return 'client';
+            }
+
+            return '';
+        }
+
         // Widget Settings Configuration
         let widgetSettings = {
             carouselHeight: 300,
@@ -902,6 +919,8 @@
 
             // Static mode — widget is being viewed in tables/submission view
             var isStatic = JFCustomWidget.isWidgetStatic();
+            var userRole = getRoleFromData(data);
+            var isClientSession = userRole === 'client';
 
             var dataDebugLines = Object.keys(data || {}).map(function (key) {
                 var value = data[key];
@@ -920,6 +939,7 @@
             document.getElementById('debug').innerHTML =
                 'isStatic: ' + isStatic +
                 '<br>isEditMode: ' + data.isEditMode +
+                '<br>userRole: ' + (userRole || '(none)') +
                 '<br>value length: ' + (data.value ? data.value.length : 0) +
                 '<br>editLink: ' + (data.editLink || false) +
                 '<br><br><strong>All data properties:</strong><br>' +
@@ -942,7 +962,7 @@
             // Apply widget settings
             applyWidgetSettings();
 
-            allowSubmissionEditUpload = isEditMode && !isStatic;
+            allowSubmissionEditUpload = isEditMode && !isStatic && !isClientSession;
 
             if (isStatic) {
                 document.body.classList.add('static-mode', 'view-only');
