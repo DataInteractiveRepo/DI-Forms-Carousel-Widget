@@ -480,6 +480,7 @@
                 var text = String(candidates[i] || '').toLowerCase();
                 if (!text) continue;
                 if (text.indexOf('?technician') !== -1 || text.indexOf('&technician') !== -1) return 'technician';
+                if (text.indexOf('?reviewer') !== -1 || text.indexOf('&reviewer') !== -1) return 'reviewer';
                 if (text.indexOf('?client') !== -1 || text.indexOf('&client') !== -1) return 'client';
             }
 
@@ -1042,6 +1043,7 @@
             var isStatic = JFCustomWidget.isWidgetStatic();
             var userRole = getRoleFromData(data);
             var isTechnicianSession = userRole === 'technician';
+            var isReviewerSession = userRole === 'reviewer';
 
             //Output debug info if enabled
             if(enableDebug){
@@ -1087,7 +1089,7 @@
             applyWidgetSettings();
 
             // Default-deny in edit mode unless role is explicitly technician.
-            allowSubmissionEditUpload = isEditMode && !isStatic && isTechnicianSession;
+            allowSubmissionEditUpload = isEditMode && !isStatic && (isTechnicianSession || isReviewerSession);
 
             if (isStatic) {
                 document.body.classList.add('static-mode', 'view-only');
